@@ -48,8 +48,12 @@ class FaceRecognitionSystem:
         # 执行检测
         boxes, probs, landmarks = self.mtcnn.detect(img, landmarks=True)
 
+        return boxes, probs, landmarks
+
+    def get_embedding(self, img, boxes):
         # 提取特征
         embeddings = []
+        img = Image.open(img).convert('RGB')
         if boxes is not None:
             face_tensors = []
             for box in boxes:
@@ -64,8 +68,7 @@ class FaceRecognitionSystem:
                 batch = torch.stack(face_tensors)
                 with torch.no_grad():
                     embeddings = self.resnet(batch).cpu().numpy()
-
-        return boxes, probs, landmarks, embeddings
+        return embeddings
 
     def draw_detections(self, img, boxes, probs, landmarks, similarity_matrix=None):
         """
@@ -135,7 +138,8 @@ if __name__ == "__main__":
     img_path = detcfg.test_img
 
     # 执行检测与特征提取
-    boxes, probs, landmarks, embeddings = system.detect_and_extract(img_path)
+    boxes, probs, landmarks = system.detect_and_extract(img_path)
+    embeddings = system.get_embedding(img_path, boxes)
     print(embeddings.shape)
     # 计算相似度矩阵
     sim_matrix = system.calculate_similarity(embeddings) if len(embeddings) > 0 else None
