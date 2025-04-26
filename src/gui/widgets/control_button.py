@@ -63,3 +63,8 @@ class ControlButtons(QWidget):
             f"background-color: {'#ff4444' if is_logged_in else '#666'};"
             "padding: 10px; font-size: 14px;"
         )
+
+    def update_camera_button(self, is_camera_on):
+        """更新摄像头按钮状态"""
+        self.camera_btn.setText("关闭摄像头" if is_camera_on else "开启摄像头")
+        self.camera_btn.setChecked(is_camera_on)

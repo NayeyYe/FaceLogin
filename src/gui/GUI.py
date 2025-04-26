@@ -1,7 +1,10 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication
 import sys
-
+from widgets.camera import CameraWidget
+from widgets.login_form import LoginForm
+from widgets.control_button import ControlButtons
+from widgets.status import StatusBar
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -13,11 +16,6 @@ class MainWindow(QMainWindow):
 
     def _init_ui(self):
         # 创建组件
-        from widgets.camera import CameraWidget
-        from widgets.login_form import LoginForm
-        from widgets.control_button import ControlButtons
-        from widgets.status import StatusBar
-
         self.camera = CameraWidget()
         self.login_form = LoginForm()
         self.controls = ControlButtons()
@@ -54,10 +52,29 @@ class MainWindow(QMainWindow):
         self.controls.camera_toggled.connect(self.camera.toggle_camera)
         self.camera.camera_status_changed.connect(self.status.update_camera_status)
         self.controls.detection_toggled.connect(self.camera.toggle_detection)
+        self.camera.camera_status_changed.connect(self.controls.update_camera_button)
+        self.camera.camera_status_changed.connect(
+            lambda on: self.status.show_message(
+                f"摄像头已{'开启' if on else '关闭'}",
+                is_error=not on
+            )
+        )
 
         # 状态更新
         self.camera.faces_detected.connect(self.status.update_face_count)
         self.camera.detection_toggled.connect(self.status.update_detection_status)
+        # 检测状态变化消息
+        self.camera.detection_toggled.connect(
+            lambda detecting: self.status.show_message(
+                f"人脸检测已{'开启' if detecting else '关闭'}",
+                is_error=not detecting
+            ) if self.camera._is_camera_on else None
+        )
+
+        # 摄像头关闭时自动关闭检测
+        self.camera.camera_status_changed.connect(
+            lambda on: self.camera.toggle_detection() if not on and self.camera._is_detecting else None
+        )
 
         # 登录控制
         self.login_form.login_clicked.connect(self._on_login)

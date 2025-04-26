@@ -59,13 +59,17 @@ class CameraWidget(QLabel):
 
     def _stop_camera(self):
         self._is_camera_on = False
-        self._is_detecting = False
+        # 强制关闭检测状态并发送信号
+        if self._is_detecting:
+            self._is_detecting = False
+            self.detection_toggled.emit(False)
         if self._cap:
             self._cap.release()
         self._timer.stop()
         self._show_gray_background()
         self.faces_detected.emit(0)
         self.camera_status_changed.emit(False)  # 新增信号发射
+        self.fps_updated.emit(0)
 
     def _show_gray_background(self):
         self.status_label.show()

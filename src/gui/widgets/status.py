@@ -1,6 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout
-from PyQt5.QtGui import QColor, QPainter, QFont
-from PyQt5.QtCore import Qt
+import time
+
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QTextBrowser
+from PyQt5.QtGui import QColor, QPainter, QFont, QTextCursor
+from PyQt5.QtCore import Qt, QTimer
 
 
 class StatusIndicator(QWidget):
@@ -60,12 +62,31 @@ class StatusBar(QWidget):
         layout.insertLayout(0, fps_layout)  # 插入到最顶部
 
         # 系统消息
-        self.message_box = QLabel("系统就绪")
-        self.message_box.setWordWrap(True)
-        self.message_box.setStyleSheet("color: #666; font-size: 12px;")
-        layout.addWidget(self.message_box)
+        self.message_box = QTextBrowser()
+        self.message_box.setMaximumHeight(80)
+        self.message_box.setStyleSheet("""
+                    QTextBrowser {
+                        background-color: #f8f8f8;
+                        border: 1px solid #ddd;
+                        font-size: 12px;
+                        padding: 5px;
+                    }
+                """)
 
+        # 消息自动清理定时器
+        self.msg_timer = QTimer(self)
+        self.msg_timer.timeout.connect(self._refresh_messages)
+        self.msg_timer.start(5000)  # 每5秒清理旧消息
+
+        self.message_history = []
+        layout.addWidget(self.message_box)
         self.setLayout(layout)
+
+    def _refresh_messages(self):
+        """保留最近10条消息"""
+        if len(self.message_history) > 10:
+            self.message_history = self.message_history[-10:]
+            self._update_message_display()
 
     def update_fps(self, fps):
         """更新FPS显示"""
@@ -88,5 +109,22 @@ class StatusBar(QWidget):
         self.face_count.setText(f"检测到人脸: {count}")
 
     def show_message(self, msg, is_error=False):
-        color = "#ff4444" if is_error else "#44ff44"
-        self.message_box.setText(f'<font color="{color}">▶ {msg}</font>')
+        """显示新消息并保留历史"""
+        css_class = "error" if is_error else "success"
+        timestamp = time.strftime("%H:%M:%S", time.localtime())
+        new_msg = f'<span class="{css_class}">[{timestamp}] ▶ {msg}</span>'
+
+        self.message_history.append(new_msg)
+        self._update_message_display()
+
+    def _update_message_display(self):
+        """更新消息显示"""
+        self.message_box.clear()
+        html = "<style>.error{color:#ff4444} .success{color:#44ff44}</style>"
+        html += "<br>".join(self.message_history[-5:])  # 最多显示5条
+        self.message_box.setHtml(html)
+
+        # 自动滚动到底部
+        cursor = self.message_box.textCursor()
+        cursor.movePosition(QTextCursor.End)
+        self.message_box.setTextCursor(cursor)
