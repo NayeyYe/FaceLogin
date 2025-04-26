@@ -21,6 +21,8 @@ class MainWindow(QMainWindow):
         self.controls = ControlButtons()
         self.status = StatusBar()
         self.current_method = "OpenCV"  # 默认检测方式
+        self.status.update_detection_method(self.current_method)
+
 
         # 主布局
         main_splitter = QSplitter(Qt.Horizontal)
@@ -31,6 +33,7 @@ class MainWindow(QMainWindow):
         left_splitter.addWidget(self.camera)
         left_splitter.addWidget(self.status)
         left_splitter.setSizes([400, 200])
+
 
         # 右侧布局
         right_splitter.addWidget(self.login_form)
@@ -94,6 +97,7 @@ class MainWindow(QMainWindow):
         self.current_method = method
         # TODO: 调用实际检测方法切换
         self.status.show_message(f"已切换至{method}检测模式")
+        self.status.update_detection_method(self.current_method)
 
     def _on_login(self, name, sid, pwd):
         # TODO: 连接实际认证逻辑

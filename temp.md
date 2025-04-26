@@ -607,104 +607,45 @@ FaceLogin/
 ```
 
 ```
-
 FaceLogin/
-
-├── core/
-│   ├── auth/                     # 身份认证模块
-│   │   ├── admin_approval.py     # 管理员审批流程控制
-│   │   └── role_manager.py       # 用户权限管理系统
-│   │
-│   ├── detection/                # 人脸检测核心模块
-│   │   ├── trainers/             # 模型训练模块
-│   │   │   ├── base_trainer.py   # 训练基类（损失计算/优化器管理）
-│   │   │   ├── onet_trainer.py   # ONet训练逻辑
-│   │   │   ├── pnet_trainer.py   # PNet训练逻辑
-│   │   │   └── rnet_trainer.py   # RNet训练逻辑
-│   │   │
-│   │   ├── anti_spoofing.py      # 反欺骗检测（RGB分析）
-│   │   ├── live_checker.py       # 活体验证（眨眼/头部姿态）
-│   │   ├── mtcnn_detector.py     # MTCNN检测器主实现（12.6KB）
-│   │   └── train_mtcnn.py        # MTCNN训练
-│   │
-│   ├── recognition/              # 人脸识别模块
-│   │   ├── facenet_model.py      # FaceNet模型加载
-│   │   ├── feature_encoder.py    # 特征编码器
-│   │   └── similarity.py         # 相似度计算（余弦/欧氏）
-│   │
-│   └── utils/                    # 通用工具
-│       ├── face_quality.py       # 人脸质量评估（光照/清晰度）
-│       ├── hardware_monitor.py   # 硬件资源监控（GPU/CPU）
-│       └── security.py           # 加密模块（AES/bcrypt）
-│
-├── datasets/                     # 原始数据集存储
-│   ├── CelebA/                   # 人脸属性数据集
-│   └── WIDER_FACE/               # 人脸检测基准数据集
-│
-├── db/                           # 数据库模块
-│   ├── csv_syncer.py             # CSV同步写入器
-│   ├── info.csv                  # 学生信息CSV镜像
-│   ├── models.py                 # 数据库模型定义（ORM）
-│   └── mysql_connector.py        # MySQL连接池管理（1.4KB）
-│
-├── gui/                          # 图形界面模块
-│   ├── assets/                   # 静态资源
-│   │   └── icons/                # 图标资源
-│   ├── widgets/                  # 自定义组件
-│   │   ├── camera_panel.py       # 摄像头显示组件
-│   │   ├── login_form.py         # 登录表单组件
-│   │   └── status_bar.py         # 状态栏组件
-│   └── GUI.py                    # 主界面窗口类
-│
-├── img/                          # 测试图像存储
-│   └── test.jpeg                 # 测试用示例图像（49.3KB）
-│
-├── logs/                         # 系统日志
-│   └── training/                 # 训练过程日志
-│
-├── scripts/                      # 系统脚本
-│   ├── data_preprocessing/       # 数据预处理脚本
-│   │   ├── gen_onet_samples.py   # ONet训练样本生成
-│   │   ├── gen_pnet_samples.py   # PNet训练样本生成
-│   │   └── gen_rnet_samples.py   # RNet训练样本生成
-│   │
-│   ├── db_init.py                # 数据库初始化脚本（1.1KB）
-│   └── face_encoder.py           # 批量人脸编码工具
-│
-├── tests/                        # 测试套件
-│   ├── data/                     # 测试数据集
-│   │   ├── faces/                # 人脸测试图像
-│   │   └── features/             # 预生成特征向量
-│   │
-│   ├── gui/                      # 界面测试
-│   │   ├── test_widgets.py       # 组件功能测试
-│   │   └── test_windows.py       # 窗口流程测试
-│   │
-│   ├── integration/              # 集成测试
-│   │   ├── test_login.py         # 登录流程测试
-│   │   ├── test_permissions.py   # 权限管理测试
-│   │   └── test_registration.py  # 注册流程测试
-│   │
-│   ├── performance/              # 性能测试
-│   │   ├── test_latency.py       # 延迟测试
-│   │   └── test_resources.py     # 资源消耗测试
-│   │
-│   ├── unit/                     # 单元测试
-│   │   ├── test_database.py      # 数据库操作测试
-│   │   ├── test_detection.py     # 人脸检测测试
-│   │   ├── test_encoder.py       # 特征编码测试
-│   │   └── test_security.py      # 安全模块测试
-│   │
-│   └── test.sql                  # SQL测试脚本（16B）
-│
-├── weights/                      # 模型权重存储
-│   ├── mtcnn_weights.pth         # 完整MTCNN权重（110.5MB）
-│   └── mtcnn.pt                  # 兼容格式权重备份
-│
-├── config.py                     # 主配置文件（数据库连接、路径参数等）
-├── project_tree.py               # 目录结构生成脚本（4.4KB）
-├── README.md                     # 项目说明文档（7.6KB）
-└── temp.md                       # 临时设计文档（6KB）
+├── img/                         # 测试图像存储
+│   └── test.jpg                 # 系统测试用人脸样本
+├── logs/                        # 系统运行日志
+├── src/                         # 核心源代码
+│   ├── auth/                    # 身份认证模块
+│   │   ├── admin_approval.py    # 管理员审批流程控制
+│   │   └── role_manager.py      # 用户权限管理系统
+│   ├── db/                      # 数据库模块
+│   │   ├── csv_syncer.py        # CSV同步写入器
+│   │   ├── db_init.py           # 数据库初始化脚本
+│   │   ├── info.csv             # 学生信息CSV镜像
+│   │   ├── models.py            # 数据库模型定义
+│   │   ├── mysql_connector.py   # MySQL连接池管理
+│   │   └── test.sql             # SQL测试脚本
+│   ├── detection/               # 人脸检测核心模块
+│   │   ├── facenet_model.py     # FaceNet模型加载与特征提取
+│   │   ├── liveness.py          # 活体验证（眨眼/头部姿态）
+│   │   └── mtcnn.py             # MTCNN检测器主实现
+│   ├── gui/                     # 图形界面模块
+│   │   ├── assets/              # 静态资源
+│   │   │   └── icons/           # 图标资源目录
+│   │   └── widgets/             # 自定义组件
+│   │       ├── camera.py        # 摄像头显示组件
+│   │       ├── control_button.py# 控制按钮组件
+│   │       ├── login_form.py    # 登录表单组件
+│   │       └── status.py        # 状态栏组件
+│   ├── utils/                   # 通用工具
+│   │   ├── encryption.py        # 加密模块（AES/bcrypt）
+│   │   └── logger.py            # 日志记录组件
+│   └── GUI.py                   # 主界面窗口类
+├── tests/                       # 测试套件
+├── weights/                     # 模型权重存储
+│   ├── onet.pt                 # ONet模型权重
+│   ├── pnet.pt                 # PNet模型权重
+│   └── rnet.pt                 # RNet模型权重
+├── config.py                    # 全局配置文件（路径/硬件/密钥等）
+└── README.md                   
+    
 
 ```
 
