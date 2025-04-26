@@ -88,6 +88,11 @@ class CameraWidget(QLabel):
     def _update_frame(self):
         start_time = time.time()
         ret, frame = self._cap.read()
+        # 计算FPS
+        self.frame_times.append(time.time())
+        self.frame_times = self.frame_times[-30:]
+        fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0]) if len(self.frame_times) > 1 else 0
+        self.fps_updated.emit(fps)  # 发射信号
         if ret:
             # 人脸检测逻辑（示例）
             if self._is_detecting:
@@ -110,11 +115,7 @@ class CameraWidget(QLabel):
             )
             self.image_label.setPixmap(pixmap)
 
-        # 计算FPS
-        self.frame_times.append(time.time())
-        self.frame_times = self.frame_times[-30:]
-        fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0]) if len(self.frame_times) > 1 else 0
-        self.fps_updated.emit(fps)  # 发射信号
+
 
     def _mock_detect_faces(self, frame):
         """示例检测方法切换"""
