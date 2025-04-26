@@ -7,7 +7,7 @@ from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
 import cv2
 
-from src.detection.mtcnn import FaceRecognitionSystem
+from ..mtcnn import FaceRecognitionSystem
 
 
 class CameraWidget(QLabel):

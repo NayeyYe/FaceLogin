@@ -1,10 +1,10 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication
 import sys
-from widgets.camera import CameraWidget
-from widgets.login_form import LoginForm
-from widgets.control_button import ControlButtons
-from widgets.status import StatusBar
+from camera import CameraWidget
+from login_form import LoginForm
+from control_button import ControlButtons
+from status import StatusBar
 
 class MainWindow(QMainWindow):
     def __init__(self):
