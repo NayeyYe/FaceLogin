@@ -10,6 +10,7 @@ class CameraWidget(QLabel):
     detection_toggled = pyqtSignal(bool)
     faces_detected = pyqtSignal(int)
     camera_status_changed = pyqtSignal(bool)  # 新增状态信号
+    fps_updated = pyqtSignal(float)  # 新增FPS信号
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -30,6 +31,7 @@ class CameraWidget(QLabel):
 
         # 初始化参数
         self._is_camera_on = False
+        self._show_gray_background()
         self._is_detecting = False
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._update_frame)
@@ -100,7 +102,7 @@ class CameraWidget(QLabel):
         self.frame_times.append(time.time())
         self.frame_times = self.frame_times[-30:]
         fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0]) if len(self.frame_times) > 1 else 0
-        self.status_label.setText(f"实时FPS: {fps:.1f}")
+        self.fps_updated.emit(fps)  # 发射信号
 
     def _mock_detect_faces(self, frame):
         # 示例检测逻辑

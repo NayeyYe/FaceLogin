@@ -52,6 +52,13 @@ class StatusBar(QWidget):
         self.face_count.setFont(QFont("Arial", 12))
         layout.addWidget(self.face_count)
 
+        # 新增FPS显示布局
+        fps_layout = QHBoxLayout()
+        self.fps_label = QLabel("FPS: --")
+        self.fps_label.setFont(QFont("Arial", 12))
+        fps_layout.addWidget(self.fps_label)
+        layout.insertLayout(0, fps_layout)  # 插入到最顶部
+
         # 系统消息
         self.message_box = QLabel("系统就绪")
         self.message_box.setWordWrap(True)
@@ -59,6 +66,15 @@ class StatusBar(QWidget):
         layout.addWidget(self.message_box)
 
         self.setLayout(layout)
+
+    def update_fps(self, fps):
+        """更新FPS显示"""
+        if fps > 0:
+            self.fps_label.setText(f"FPS: {fps:.1f}")
+            self.fps_label.setStyleSheet("color: #4CAF50;")
+        else:
+            self.fps_label.setText("FPS: --")
+            self.fps_label.setStyleSheet("color: #666;")
 
     def update_camera_status(self, is_on):
         color = QColor(0, 255, 0) if is_on else QColor(255, 0, 0)

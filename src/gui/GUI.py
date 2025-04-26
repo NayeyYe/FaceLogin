@@ -64,6 +64,9 @@ class MainWindow(QMainWindow):
         self.login_form.register_clicked.connect(self._on_register)
         self.controls.logout_clicked.connect(self._on_logout)
 
+        # 新增FPS信号连接
+        self.camera.fps_updated.connect(self.status.update_fps)
+
 
     def _on_login(self, name, sid, pwd):
         # TODO: 连接实际认证逻辑
