@@ -8,7 +8,7 @@ from config import detcfg
 import cv2
 
 from ..utils.logger import enable_logging
-from detector import OfficialMTCNN
+from mtcnn import OfficialMTCNN
 
 
 class FaceNetModel:
