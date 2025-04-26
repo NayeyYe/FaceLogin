@@ -1,10 +1,13 @@
 import time
 
 import numpy as np
+from PIL import Image
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
 import cv2
+
+from src.detection.mtcnn import FaceRecognitionSystem
 
 
 class CameraWidget(QLabel):
@@ -13,6 +16,7 @@ class CameraWidget(QLabel):
     faces_detected = pyqtSignal(int)
     camera_status_changed = pyqtSignal(bool)  # 新增状态信号
     fps_updated = pyqtSignal(float)  # 新增FPS信号
+
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -41,6 +45,10 @@ class CameraWidget(QLabel):
         self.frame_times = []
 
         self.detection_method = "OpenCV"
+
+        # 添加人脸识别系统初始化
+        self.face_system = FaceRecognitionSystem()
+        self.last_frame = None  # 用于保存最新帧
 
     def set_detection_method(self, method):
         """设置检测方法接口"""
@@ -94,13 +102,20 @@ class CameraWidget(QLabel):
         self.frame_times = self.frame_times[-30:]
         fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0]) if len(self.frame_times) > 1 else 0
         self.fps_updated.emit(fps)  # 发射信号
+
         if ret:
             # 人脸检测逻辑（示例）
+            # 性能优化：当FPS低于15时自动跳帧
+            if fps < 15 and len(self.frame_times) > 10:
+                return
             if self._is_detecting:
                 # TODO: 调用实际的人脸检测方法
-                faces = self._mock_detect_faces(frame)
-                self.faces_detected.emit(len(faces))
-                frame = self._draw_detections(frame, faces)
+                try:
+                    faces = self._mock_detect_faces(frame)
+                    self.faces_detected.emit(len(faces))
+                    frame = self._draw_detections(frame, faces)
+                except Exception as e:
+                    print(f"检测异常: {str(e)}")
 
             # 转换图像格式
             rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -123,8 +138,23 @@ class CameraWidget(QLabel):
         self.status_label.setText(f"当前检测方式: {self.detection_method}")
 
         if self.detection_method == "MTCNN":
-            # TODO: 调用MTCNN检测
-            return np.array([])  # 示例返回
+            try:
+                # 转换图像格式为PIL
+                img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+                # 执行MTCNN检测
+                boxes, _, _ = self.face_system.detect_and_extract(img_pil)
+
+                # 转换坐标格式为(x,y,w,h)
+                faces = []
+                if boxes is not None:
+                    for box in boxes:
+                        x1, y1, x2, y2 = map(int, box)
+                        faces.append((x1, y1, x2 - x1, y2 - y1))
+                return faces
+            except Exception as e:
+                print(f"MTCNN检测异常: {str(e)}")
+                return []
         elif self.detection_method == "Dlib":
             # TODO: 调用Dlib检测
             return np.array([])  # 示例返回
