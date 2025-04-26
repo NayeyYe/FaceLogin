@@ -1,37 +1,40 @@
 import time
-
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
-from PyQt5.QtGui import QImage, QPixmap, QColor
-from PyQt5.QtWidgets import QLabel, QWidget
+from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
+from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
 import cv2
 
+
 class CameraWidget(QLabel):
-    frame_updated = pyqtSignal(QImage)
+    # 新增信号
+    detection_toggled = pyqtSignal(bool)
+    faces_detected = pyqtSignal(int)
     camera_status_changed = pyqtSignal(bool)  # 新增状态信号
-    fps_updated = pyqtSignal(float)  # 新增FPS信号
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setAlignment(Qt.AlignCenter)
-        self.setMinimumSize(640, 480)
+        # 初始化布局
+        self.layout = QVBoxLayout(self)
+        self.setLayout(self.layout)
+
+        # 状态标签
+        self.status_label = QLabel("摄像头未开启", self)
+        self.status_label.setAlignment(Qt.AlignCenter)
+        self.status_label.setStyleSheet("color: white; font-size: 24px;")
+        self.layout.addWidget(self.status_label)
+
+        # 图像显示区域
+        self.image_label = QLabel(self)
+        self.image_label.setAlignment(Qt.AlignCenter)
+        self.layout.addWidget(self.image_label)
+
+        # 初始化参数
         self._is_camera_on = False
+        self._is_detecting = False
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._update_frame)
         self._cap = None
-        self._show_gray_background()  # 初始灰色背景
         self.frame_times = []
-
-    def _show_gray_background(self):
-        """绘制灰色背景"""
-        pixmap = QPixmap(self.size())
-        pixmap.fill(QColor(100, 100, 100))
-        self.setPixmap(pixmap)
-
-    def resizeEvent(self, event):
-        """窗口大小变化时重绘背景"""
-        super().resizeEvent(event)
-        if not self._is_camera_on:
-            self._show_gray_background()
 
     def toggle_camera(self):
         if not self._is_camera_on:
@@ -39,46 +42,74 @@ class CameraWidget(QLabel):
         else:
             self._stop_camera()
 
+    def toggle_detection(self):
+        self._is_detecting = not self._is_detecting
+        self.detection_toggled.emit(self._is_detecting)
+
     def _start_camera(self):
         self._cap = cv2.VideoCapture(0)
         if self._cap.isOpened():
             self._is_camera_on = True
+            self.status_label.hide()
             self._timer.start(30)
-            self.frame_updated.connect(self._display_frame)
-            self.setStyleSheet("")  # 清除背景色
-            self.camera_status_changed.emit(True)
+            self.setStyleSheet("background-color: black;")
+            self.camera_status_changed.emit(True)  # 新增信号发射
 
     def _stop_camera(self):
         self._is_camera_on = False
-        self._timer.stop()
+        self._is_detecting = False
         if self._cap:
             self._cap.release()
-        self.clear()
+        self._timer.stop()
         self._show_gray_background()
-        self.camera_status_changed.emit(False)
-        self.fps_updated.emit(0)
+        self.faces_detected.emit(0)
+        self.camera_status_changed.emit(False)  # 新增信号发射
+
+    def _show_gray_background(self):
+        self.status_label.show()
+        self.image_label.clear()
+        self.setStyleSheet("background-color: #646464;")
+        self.status_label.setText("摄像头未开启")
 
     def _update_frame(self):
         start_time = time.time()
         ret, frame = self._cap.read()
         if ret:
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = image.shape
+            # 人脸检测逻辑（示例）
+            if self._is_detecting:
+                # TODO: 调用实际的人脸检测方法
+                faces = self._mock_detect_faces(frame)
+                self.faces_detected.emit(len(faces))
+                frame = self._draw_detections(frame, faces)
+
+            # 转换图像格式
+            rgb_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = rgb_image.shape
             bytes_per_line = ch * w
-            q_img = QImage(image.data, w, h, bytes_per_line, QImage.Format_RGB888)
-            self.frame_updated.emit(q_img)
+            q_img = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+
+            # 显示图像
+            pixmap = QPixmap.fromImage(q_img).scaled(
+                self.image_label.size(),
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+            )
+            self.image_label.setPixmap(pixmap)
 
         # 计算FPS
-        self.frame_times.append(start_time)
-        self.frame_times = self.frame_times[-30:]  # 保留最近30帧
-        if len(self.frame_times) >= 2:
-            fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0])
-            self.fps_updated.emit(fps)
+        self.frame_times.append(time.time())
+        self.frame_times = self.frame_times[-30:]
+        fps = len(self.frame_times) / (self.frame_times[-1] - self.frame_times[0]) if len(self.frame_times) > 1 else 0
+        self.status_label.setText(f"实时FPS: {fps:.1f}")
 
-    def _display_frame(self, q_img):
-        pixmap = QPixmap.fromImage(q_img).scaled(
-            self.width(), self.height(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation  # 添加平滑缩放
-        )
-        self.setPixmap(pixmap)
+    def _mock_detect_faces(self, frame):
+        # 示例检测逻辑
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        return face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    def _draw_detections(self, frame, faces):
+        # 绘制检测框
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        return frame
