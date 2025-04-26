@@ -182,11 +182,11 @@ class CameraWidget(QLabel):
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 255, 0), 2)
 
-            # 绘制关键点
-            if 'landmarks' in data:
-                for (px, py) in data['landmarks']:
-                    cv2.circle(frame,
-                               (int(px), int(py)),
-                               3, (0, 255, 255), -1)
+            # # 绘制关键点
+            # if 'landmarks' in data:
+            #     for (px, py) in data['landmarks']:
+            #         cv2.circle(frame,
+            #                    (int(px), int(py)),
+            #                    3, (0, 255, 255), -1)
 
         return frame
