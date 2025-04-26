@@ -38,6 +38,14 @@ class CameraWidget(QLabel):
         self._cap = None
         self.frame_times = []
 
+        self.detection_method = "OpenCV"
+
+    def set_detection_method(self, method):
+        """设置检测方法接口"""
+        self.detection_method = method
+        # TODO: 实际切换检测算法
+        print(f"Switched to {method} detection")  # 临时调试输出
+
     def toggle_camera(self):
         if not self._is_camera_on:
             self._start_camera()
@@ -109,10 +117,20 @@ class CameraWidget(QLabel):
         self.fps_updated.emit(fps)  # 发射信号
 
     def _mock_detect_faces(self, frame):
-        # 示例检测逻辑
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        return face_cascade.detectMultiScale(gray, 1.1, 4)
+        """示例检测方法切换"""
+        if self.detection_method == "MTCNN":
+            # TODO: 调用MTCNN检测
+            pass
+        elif self.detection_method == "Dlib":
+            # TODO: 调用Dlib检测
+            pass
+        else:  # OpenCV
+            # 保持原有检测逻辑
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            face_cascade = cv2.CascadeClassifier(
+                cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            return face_cascade.detectMultiScale(gray, 1.1, 4)
+
 
     def _draw_detections(self, frame, faces):
         # 绘制检测框

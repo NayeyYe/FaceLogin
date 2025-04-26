@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         self.login_form = LoginForm()
         self.controls = ControlButtons()
         self.status = StatusBar()
+        self.current_method = "OpenCV"  # 默认检测方式
 
         # 主布局
         main_splitter = QSplitter(Qt.Horizontal)
@@ -76,6 +77,10 @@ class MainWindow(QMainWindow):
             lambda on: self.camera.toggle_detection() if not on and self.camera._is_detecting else None
         )
 
+        # 新增检测方式切换信号连接
+        self.controls.method_changed.connect(self._on_method_changed)
+        self.controls.method_changed.connect(self.status.update_detection_method)
+
         # 登录控制
         self.login_form.login_clicked.connect(self._on_login)
         self.login_form.register_clicked.connect(self._on_register)
@@ -84,6 +89,11 @@ class MainWindow(QMainWindow):
         # 新增FPS信号连接
         self.camera.fps_updated.connect(self.status.update_fps)
 
+    def _on_method_changed(self, method):
+        """处理检测方式切换"""
+        self.current_method = method
+        # TODO: 调用实际检测方法切换
+        self.status.show_message(f"已切换至{method}检测模式")
 
     def _on_login(self, name, sid, pwd):
         # TODO: 连接实际认证逻辑

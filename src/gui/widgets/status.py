@@ -61,6 +61,11 @@ class StatusBar(QWidget):
         fps_layout.addWidget(self.fps_label)
         layout.insertLayout(0, fps_layout)  # 插入到最顶部
 
+        # 新增检测方式显示
+        self.method_label = QLabel("当前检测方式: --")
+        self.method_label.setFont(QFont("Arial", 12))
+        layout.insertWidget(2, self.method_label)  # 插入到人脸计数上方
+
         # 系统消息
         self.message_box = QTextBrowser()
         self.message_box.setMaximumHeight(80)
@@ -81,6 +86,11 @@ class StatusBar(QWidget):
         self.message_history = []
         layout.addWidget(self.message_box)
         self.setLayout(layout)
+
+    def update_detection_method(self, method):
+        """更新检测方式显示"""
+        self.method_label.setText(f"当前检测方式: {method}")
+        self.method_label.setStyleSheet("color: #2196F3;")
 
     def _refresh_messages(self):
         """保留最近10条消息"""
