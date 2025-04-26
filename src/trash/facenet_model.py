@@ -2,13 +2,12 @@ import torch
 import numpy as np
 from facenet_pytorch import InceptionResnetV1
 from PIL import Image
-from torch.nn.functional import embedding
 from torchvision import transforms
 from config import detcfg
 import cv2
 
-from ..utils.logger import enable_logging
-from mtcnn import OfficialMTCNN
+from src.utils.logger import enable_logging
+from detector import OfficialMTCNN
 
 
 class FaceNetModel:
