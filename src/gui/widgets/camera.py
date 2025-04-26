@@ -159,14 +159,16 @@ class CameraWidget(QLabel):
             except Exception as e:
                 print(f"MTCNN检测异常: {str(e)}")
                 return []
-        elif self.detection_method == "Dlib":
-            # TODO: 调用Dlib检测
-            return np.array([])  # 示例返回
-        else:  # OpenCV
+
+        if self.detection_method == "OpenCV":
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             face_cascade = cv2.CascadeClassifier(
                 cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             return face_cascade.detectMultiScale(gray, 1.1, 4)
+
+        if self.detection_method == "Dlib":
+            # TODO: 调用Dlib检测
+            return np.array([])  # 示例返回
 
     def _draw_detections(self, frame, faces):
         # 绘制检测框
