@@ -1,4 +1,6 @@
 import time
+
+import numpy as np
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
@@ -118,19 +120,19 @@ class CameraWidget(QLabel):
 
     def _mock_detect_faces(self, frame):
         """示例检测方法切换"""
+        self.status_label.setText(f"当前检测方式: {self.detection_method}")
+
         if self.detection_method == "MTCNN":
             # TODO: 调用MTCNN检测
-            pass
+            return np.array([])  # 示例返回
         elif self.detection_method == "Dlib":
             # TODO: 调用Dlib检测
-            pass
+            return np.array([])  # 示例返回
         else:  # OpenCV
-            # 保持原有检测逻辑
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             face_cascade = cv2.CascadeClassifier(
                 cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
             return face_cascade.detectMultiScale(gray, 1.1, 4)
-
 
     def _draw_detections(self, frame, faces):
         # 绘制检测框

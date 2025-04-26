@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
 
         # 新增检测方式切换信号连接
         self.controls.method_changed.connect(self._on_method_changed)
-        self.controls.method_changed.connect(self.status.update_detection_method)
+        self.controls.method_changed.connect(self.camera.set_detection_method)
 
         # 登录控制
         self.login_form.login_clicked.connect(self._on_login)

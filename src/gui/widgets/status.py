@@ -89,8 +89,14 @@ class StatusBar(QWidget):
 
     def update_detection_method(self, method):
         """更新检测方式显示"""
+        color_map = {
+            "OpenCV": "#4CAF50",
+            "MTCNN": "#2196F3",
+            "Dlib": "#9C27B0"
+        }
         self.method_label.setText(f"当前检测方式: {method}")
-        self.method_label.setStyleSheet("color: #2196F3;")
+        self.method_label.setStyleSheet(f"color: {color_map.get(method, '#666')};")
+
 
     def _refresh_messages(self):
         """保留最近10条消息"""
