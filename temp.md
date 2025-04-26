@@ -607,45 +607,33 @@ FaceLogin/
 ```
 
 ```
-FaceLogin/
-├── img/                         # 测试图像存储
-│   └── test.jpg                 # 系统测试用人脸样本
-├── logs/                        # 系统运行日志
-├── src/                         # 核心源代码
-│   ├── auth/                    # 身份认证模块
-│   │   ├── admin_approval.py    # 管理员审批流程控制
-│   │   └── role_manager.py      # 用户权限管理系统
-│   ├── db/                      # 数据库模块
-│   │   ├── csv_syncer.py        # CSV同步写入器
-│   │   ├── db_init.py           # 数据库初始化脚本
-│   │   ├── info.csv             # 学生信息CSV镜像
-│   │   ├── models.py            # 数据库模型定义
-│   │   ├── mysql_connector.py   # MySQL连接池管理
-│   │   └── test.sql             # SQL测试脚本
-│   ├── detection/               # 人脸检测核心模块
-│   │   ├── facenet_model.py     # FaceNet模型加载与特征提取
-│   │   ├── liveness.py          # 活体验证（眨眼/头部姿态）
-│   │   └── mtcnn.py             # MTCNN检测器主实现
-│   ├── gui/                     # 图形界面模块
-│   │   ├── assets/              # 静态资源
-│   │   │   └── icons/           # 图标资源目录
-│   │   └── widgets/             # 自定义组件
-│   │       ├── camera.py        # 摄像头显示组件
-│   │       ├── control_button.py# 控制按钮组件
-│   │       ├── login_form.py    # 登录表单组件
-│   │       └── status.py        # 状态栏组件
-│   ├── utils/                   # 通用工具
-│   │   ├── encryption.py        # 加密模块（AES/bcrypt）
-│   │   └── logger.py            # 日志记录组件
-│   └── GUI.py                   # 主界面窗口类
-├── tests/                       # 测试套件
-├── weights/                     # 模型权重存储
-│   ├── onet.pt                 # ONet模型权重
-│   ├── pnet.pt                 # PNet模型权重
-│   └── rnet.pt                 # RNet模型权重
-├── config.py                    # 全局配置文件（路径/硬件/密钥等）
-└── README.md                   
-    
+FaceLogin/  # 主项目目录
+├── db/                      # 数据库相关
+│   ├── csv_syncer.py        # CSV与数据库同步工具
+│   ├── db_init.py           # 数据库初始化脚本
+│   ├── info.csv             # 用户信息数据文件
+│   └── test.sql             # SQL测试脚本
+├── gui/                     # 图形界面模块
+│   ├── GUI.py               # 主窗口界面
+│   ├── camera.py            # 摄像头控制组件
+│   ├── control_button.py    # 功能按钮组件
+│   ├── login_form.py        # 登录/注册表单
+│   └── status.py            # 状态显示组件
+│
+├── img/                     # 图像资源
+│   └── test.jpg             # 测试用图像文件
+├── logs/                    # 系统日志
+├── utils/                   # 工具模块
+│   ├── encryption.py        # 数据加密模块
+│   └── logger.py            # 日志记录器
+│
+├── weights/                 # 模型权重
+│   ├── onet.pt             # MTCNN第三阶段网络权重
+│   ├── pnet.pt             # MTCNN第一阶段网络权重
+│   └── rnet.pt             # MTCNN第二阶段网络权重
+├── README.md                 # 项目说明文档
+├── config.py                 # 全局配置文件（硬件设置/路径配置）
+└── mtcnn.py                 # MTCNN人脸识别核心实现
 
 ```
 
