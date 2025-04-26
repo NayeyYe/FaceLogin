@@ -167,25 +167,28 @@ class CameraWidget(QLabel):
 
     def _draw_detections(self, frame, faces):
         # 绘制检测框
-        for data in faces:
-            x, y, w, h = data['box']
+        if self.detection_method == "MTCNN":
+            for data in faces:
+                x, y, w, h = data['box']
 
-            # 绘制边界框
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # 绘制边界框
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            # 绘制置信度
-            if 'prob' in data:
-                cv2.putText(frame,
-                            f"{data['prob']:.2f}",
-                            (x, y - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 255, 0), 2)
+                # 绘制置信度
+                if 'prob' in data:
+                    cv2.putText(frame,
+                                f"{data['prob']:.2f}",
+                                (x, y - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX,
+                                0.6, (0, 255, 0), 2)
 
-            # # 绘制关键点
-            # if 'landmarks' in data:
-            #     for (px, py) in data['landmarks']:
-            #         cv2.circle(frame,
-            #                    (int(px), int(py)),
-            #                    3, (0, 255, 255), -1)
-
+                # # 绘制关键点
+                # if 'landmarks' in data:
+                #     for (px, py) in data['landmarks']:
+                #         cv2.circle(frame,
+                #                    (int(px), int(py)),
+                #                    3, (0, 255, 255), -1)
+        if self.detection_method == "OpenCV":
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         return frame
