@@ -43,7 +43,6 @@ class CameraWidget(QLabel):
     def set_detection_method(self, method):
         """设置检测方法接口"""
         self.detection_method = method
-        # TODO: 实际切换检测算法
         print(f"Switched to {method} detection")  # 临时调试输出
 
     def toggle_camera(self):
