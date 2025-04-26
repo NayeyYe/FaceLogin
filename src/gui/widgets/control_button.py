@@ -34,7 +34,7 @@ class ControlButtons(QWidget):
         method_layout = QVBoxLayout()
         method_label = QLabel("检测方式:")
         self.method_combo = QComboBox()
-        self.method_combo.addItems(["OpenCV", "MTCNN", "Dlib"])
+        self.method_combo.addItems(["OpenCV", "MTCNN"])
         self.method_combo.currentTextChanged.connect(self.method_changed)
         method_layout.addWidget(method_label)
         method_layout.addWidget(self.method_combo)

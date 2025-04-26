@@ -92,7 +92,6 @@ class StatusBar(QWidget):
         color_map = {
             "OpenCV": "#4CAF50",
             "MTCNN": "#2196F3",
-            "Dlib": "#9C27B0"
         }
         self.method_label.setText(f"当前检测方式: {method}")
         self.method_label.setStyleSheet(f"color: {color_map.get(method, '#666')};")
