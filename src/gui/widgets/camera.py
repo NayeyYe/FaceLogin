@@ -143,14 +143,18 @@ class CameraWidget(QLabel):
                 img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
                 # 执行MTCNN检测
-                boxes, _, _ = self.face_system.detect_and_extract(img_pil)
+                boxes, probs, landmarks = self.face_system.detect_and_extract(img_pil)
 
                 # 转换坐标格式为(x,y,w,h)
                 faces = []
                 if boxes is not None:
-                    for box in boxes:
+                    for i, box in enumerate(boxes):
                         x1, y1, x2, y2 = map(int, box)
-                        faces.append((x1, y1, x2 - x1, y2 - y1))
+                        faces.append({
+                            'box': (x1, y1, x2 - x1, y2 - y1),
+                            'prob': probs[i],
+                            'landmarks': landmarks[i]
+                        })
                 return faces
             except Exception as e:
                 print(f"MTCNN检测异常: {str(e)}")
@@ -166,6 +170,25 @@ class CameraWidget(QLabel):
 
     def _draw_detections(self, frame, faces):
         # 绘制检测框
-        for (x, y, w, h) in faces:
+        for data in faces:
+            x, y, w, h = data['box']
+
+            # 绘制边界框
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            # 绘制置信度
+            if 'prob' in data:
+                cv2.putText(frame,
+                            f"{data['prob']:.2f}",
+                            (x, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.6, (0, 255, 0), 2)
+
+            # 绘制关键点
+            if 'landmarks' in data:
+                for (px, py) in data['landmarks']:
+                    cv2.circle(frame,
+                               (int(px), int(py)),
+                               3, (0, 255, 255), -1)
+
         return frame
