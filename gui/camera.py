@@ -109,7 +109,6 @@ class CameraWidget(QLabel):
             if fps < 15 and len(self.frame_times) > 10:
                 return
             if self._is_detecting:
-                # TODO: 调用实际的人脸检测方法
                 try:
                     faces = self._mock_detect_faces(frame)
                     self.faces_detected.emit(len(faces))
