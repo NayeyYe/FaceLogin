@@ -5,6 +5,7 @@ from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
 import cv2
 
+from liveness import BlinkDetector
 from mtcnn import FaceRecognitionSystem
 
 
@@ -47,6 +48,11 @@ class CameraWidget(QLabel):
         # 添加人脸识别系统初始化
         self.face_system = FaceRecognitionSystem()
         self.last_frame = None  # 用于保存最新帧
+        # 活体检测相关初始化
+        self.blink_detector = BlinkDetector()  # 使用改进后的眨眼检测器
+        self.liveness_status = False
+        self.blink_counter = 0
+        self.last_blink_time = time.time()
 
     def set_detection_method(self, method):
         """设置检测方法接口"""
@@ -85,6 +91,9 @@ class CameraWidget(QLabel):
         self.faces_detected.emit(0)
         self.camera_status_changed.emit(False)  # 新增信号发射
         self.fps_updated.emit(0)
+        self.blink_detector.reset()
+        self.liveness_status = False
+        self.blink_counter = 0
 
     def _show_gray_background(self):
         self.status_label.show()
@@ -110,6 +119,7 @@ class CameraWidget(QLabel):
                 try:
                     faces = self._mock_detect_faces(frame)
                     self.faces_detected.emit(len(faces))
+                    self._update_liveness_detection(frame)
                     frame = self._draw_detections(frame, faces)
                 except Exception as e:
                     print(f"检测异常: {str(e)}")
@@ -128,6 +138,23 @@ class CameraWidget(QLabel):
             )
             self.image_label.setPixmap(pixmap)
 
+    def _update_liveness_detection(self, frame):
+        """更新活体检测状态"""
+        # 使用优化后的眨眼检测
+        result, _ = self.blink_detector.detect(frame)
+
+        # 动态调整检测频率
+        current_time = time.time()
+        if current_time - self.last_blink_time > 15.0:  # 每秒重置计数器
+            self.blink_counter = 0
+            self.last_blink_time = current_time
+
+        if result["blink_detected"]:
+            self.blink_counter += 1
+
+        # 判断活体：2秒内至少检测到1次眨眼
+        self.liveness_status = self.blink_counter >= 1
+
     def _mock_detect_faces(self, frame):
         """示例检测方法切换"""
         self.status_label.setText(f"当前检测方式: {self.detection_method}")
@@ -143,10 +170,9 @@ class CameraWidget(QLabel):
                 # 转换坐标格式为(x,y,w,h)
                 faces = []
                 if boxes is not None:
-                    for i, box in enumerate(boxes):
-                        x1, y1, x2, y2 = map(int, box)
+                    for i in range(len(boxes)):
                         faces.append({
-                            'box': (x1, y1, x2 - x1, y2 - y1),
+                            'box': boxes[i],
                             'prob': probs[i],
                             'landmarks': landmarks[i]
                         })
@@ -164,16 +190,28 @@ class CameraWidget(QLabel):
         # 绘制检测框
         if self.detection_method == "MTCNN":
             for data in faces:
-                x, y, w, h = data['box']
+                x1, y1, x2, y2 = map(int, data['box'])
+                w = x2 - x1
+                h = y2 - y1
 
                 # 绘制边界框
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # 根据活体状态设置颜色
+                color = (0, 255, 0) if self.liveness_status else (0, 0, 255)
+
+                # 绘制边界框
+                cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+
+                # 在框下方添加活体状态
+                # 在框下方显示活体状态
+                text = "Live: True" if self.liveness_status else "Live: False"
+                cv2.putText(frame, text, (x1, y2 + 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
                 # 绘制置信度
                 if 'prob' in data:
                     cv2.putText(frame,
                                 f"{data['prob']:.2f}",
-                                (x, y - 10),
+                                (x1, y1 - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX,
                                 0.6, (0, 255, 0), 2)
 
