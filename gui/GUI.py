@@ -1,10 +1,4 @@
-import time
-
-import cv2
-import numpy as np
-from PIL import Image
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication, QWidget, QVBoxLayout
 import sys
 from camera import CameraWidget

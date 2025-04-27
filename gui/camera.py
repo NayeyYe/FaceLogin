@@ -1,6 +1,4 @@
 import time
-
-import numpy as np
 from PIL import Image
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
@@ -129,8 +127,6 @@ class CameraWidget(QLabel):
                 Qt.SmoothTransformation
             )
             self.image_label.setPixmap(pixmap)
-
-
 
     def _mock_detect_faces(self, frame):
         """示例检测方法切换"""
