@@ -7,7 +7,7 @@ from mtcnn import FaceRecognitionSystem
 
 
 class LivenessDetector:
-    def __init__(self, movement_threshold=3, required_movements=3):
+    def __init__(self, movement_threshold=2, required_movements=5):
         """活体检测器
         Args:
             movement_threshold (int): 关键点移动判定阈值（像素）

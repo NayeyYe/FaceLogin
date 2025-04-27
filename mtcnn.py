@@ -20,7 +20,7 @@ class FaceRecognitionSystem:
         )
 
         # 初始化FaceNet模型
-        self.resnet = InceptionResnetV1(pretrained='vggface2').eval().to(detcfg.device)
+        self.resnet = InceptionResnetV1(pretrained='vggface2').half().eval().to(detcfg.device)
         self._init_preprocess()
 
         # 注册用户特征库 {user_id: embedding}

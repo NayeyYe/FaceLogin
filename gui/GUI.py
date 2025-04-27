@@ -1,4 +1,10 @@
-from PyQt5.QtCore import Qt
+import time
+
+import cv2
+import numpy as np
+from PIL import Image
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication, QWidget, QVBoxLayout
 import sys
 from camera import CameraWidget
@@ -99,7 +105,6 @@ class MainWindow(QMainWindow):
     def _on_method_changed(self, method):
         """处理检测方式切换"""
         self.current_method = method
-        # TODO: 调用实际检测方法切换
         self.status.show_message(f"已切换至{method}检测模式")
         self.status.update_detection_method(self.current_method)
 

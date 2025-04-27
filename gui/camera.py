@@ -41,7 +41,7 @@ class CameraWidget(QLabel):
         self._is_detecting = False
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._update_frame)
-        self._cap = None
+        self.cap = None
         self.frame_times = []
 
         self.detection_method = "OpenCV"
@@ -66,8 +66,8 @@ class CameraWidget(QLabel):
         self.detection_toggled.emit(self._is_detecting)
 
     def _start_camera(self):
-        self._cap = cv2.VideoCapture(0)
-        if self._cap.isOpened():
+        self.cap = cv2.VideoCapture(0)
+        if self.cap.isOpened():
             self._is_camera_on = True
             self.status_label.hide()
             self._timer.start(30)
@@ -80,8 +80,8 @@ class CameraWidget(QLabel):
         if self._is_detecting:
             self._is_detecting = False
             self.detection_toggled.emit(False)
-        if self._cap:
-            self._cap.release()
+        if self.cap:
+            self.cap.release()
         self._timer.stop()
         self._show_gray_background()
         self.faces_detected.emit(0)
@@ -96,7 +96,7 @@ class CameraWidget(QLabel):
 
     def _update_frame(self):
         start_time = time.time()
-        ret, frame = self._cap.read()
+        ret, frame = self.cap.read()
         # 计算FPS
         self.frame_times.append(time.time())
         self.frame_times = self.frame_times[-30:]
