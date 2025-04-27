@@ -70,3 +70,47 @@ class LoginForm(QWidget):
             self.id_input.text(),
             self.pwd_input.text()
         )
+
+
+# login_form.py 新增UserInfoWidget类
+class UserInfoWidget(QWidget):
+    def __init__(self, name, sid, face_feature=None):
+        super().__init__()
+        layout = QVBoxLayout()
+        layout.setContentsMargins(20, 20, 20, 20)
+
+        # 标题
+        title = QLabel("用户信息")
+        title.setFont(QFont("Arial", 18, QFont.Bold))
+        title.setAlignment(Qt.AlignCenter)
+        layout.addWidget(title)
+
+        # 信息展示表单
+        form_layout = QFormLayout()
+        form_layout.setVerticalSpacing(15)
+
+        self.name_label = QLabel(name)
+        self.sid_label = QLabel(sid)
+        self.feature_label = QLabel(str(face_feature[:5] if face_feature else None))
+
+        form_layout.addRow("姓名:", self.name_label)
+        form_layout.addRow("学号:", self.sid_label)
+        form_layout.addRow("特征值:", self.feature_label)
+
+        # 美化样式
+        info_style = """
+            QLabel {
+                font-size: 14px;
+                padding: 5px;
+                border-bottom: 1px solid #eee;
+            }
+        """
+        for label in [self.name_label, self.sid_label, self.feature_label]:
+            label.setStyleSheet(info_style)
+
+        layout.addLayout(form_layout)
+        self.setLayout(layout)
+
+    def update_feature(self, new_feature):
+        """更新特征值显示"""
+        self.feature_label.setText(str(new_feature[:5]) if new_feature else None)

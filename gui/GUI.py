@@ -1,8 +1,8 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication
+from PyQt5.QtWidgets import QMainWindow, QSplitter, QApplication, QWidget, QVBoxLayout
 import sys
 from camera import CameraWidget
-from login_form import LoginForm
+from login_form import LoginForm, UserInfoWidget
 from control_button import ControlButtons
 from status import StatusBar
 
@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
         self._init_ui()
         self._connect_signals()
         self.is_logged_in = False
+        self.user_info = None  # 新增用户信息组件引用
 
     def _init_ui(self):
         # 创建组件
@@ -36,12 +37,15 @@ class MainWindow(QMainWindow):
 
 
         # 右侧布局
-        right_splitter.addWidget(self.login_form)
-        right_splitter.addWidget(self.controls)
+        self.right_panel = QWidget()
+        right_layout = QVBoxLayout()
+        right_layout.addWidget(self.login_form)
+        right_layout.addWidget(self.controls)
+        self.right_panel.setLayout(right_layout)
         right_splitter.setSizes([300, 200])
 
         main_splitter.addWidget(left_splitter)
-        main_splitter.addWidget(right_splitter)
+        main_splitter.addWidget(self.right_panel)  # 替换原有right_splitter
         main_splitter.setSizes([800, 400])
 
         self.setCentralWidget(main_splitter)
@@ -100,11 +104,25 @@ class MainWindow(QMainWindow):
         self.status.update_detection_method(self.current_method)
 
     def _on_login(self, name, sid, pwd):
-        # TODO: 连接实际认证逻辑
         self.is_logged_in = True
+
+        # 创建用户信息组件
+        self.user_info = UserInfoWidget(
+            name=name,
+            sid=sid,
+            face_feature=None  # 暂时设为None，后续可从数据库获取
+        )
+
+        # 替换右侧面板内容
+        self.right_panel.layout().replaceWidget(
+            self.login_form, self.user_info
+        )
+        self.login_form.hide()
+        self.user_info.show()
+
+        # 更新状态
         self.controls.update_login_state(True)
         self.status.show_message(f"欢迎 {name}（{sid}）登录成功！")
-        self.login_form.setVisible(False)
 
     def _on_register(self, name, sid, pwd):
         # TODO: 连接实际注册逻辑
@@ -112,8 +130,16 @@ class MainWindow(QMainWindow):
 
     def _on_logout(self):
         self.is_logged_in = False
+
+        # 恢复登录表单
+        self.right_panel.layout().replaceWidget(
+            self.user_info, self.login_form
+        )
+        self.user_info.hide()
+        self.login_form.show()
+
+        # 更新状态
         self.controls.update_login_state(False)
-        self.login_form.setVisible(True)
         self.status.show_message("已安全退出登录")
 
 
