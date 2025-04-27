@@ -49,15 +49,18 @@ class LivenessDetector:
             self.prev_landmarks = current
             is_live = self.movement_count >= self.required_movements
 
-            # 绘制检测信息
-            x1, y1, x2, y2 = map(int, boxes[0])
-            color = (0, 255, 0) if is_live else (0, 0, 255)
-            cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-            text = f"Live: {self.movement_count}/{self.required_movements}"
-            cv2.putText(frame, text, (x1, y1 - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+            # self.draw(boxes, is_live, frame)
 
         return is_live, frame
+
+    def draw(self, boxes, is_live, frame):
+        # 绘制检测信息
+        x1, y1, x2, y2 = map(int, boxes[0])
+        color = (0, 255, 0) if is_live else (0, 0, 255)
+        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        text = f"Live: {self.movement_count}/{self.required_movements}"
+        cv2.putText(frame, text, (x1, y1 - 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
 
 def run():
