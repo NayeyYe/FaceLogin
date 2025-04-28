@@ -100,6 +100,7 @@ class MainWindow(QMainWindow):
         """处理检测方式切换"""
         self.current_method = method
         self.status.show_message(f"已切换至{method}检测模式")
+        self.camera.blink_counter = 0
         self.status.update_detection_method(self.current_method)
 
     def _on_login(self, name, sid, pwd):

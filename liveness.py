@@ -37,6 +37,8 @@ class BlinkDetector:
         self.total_blinks = 0
         self.ear_history = []
 
+        self.draw_annotations = False
+
     def _eye_aspect_ratio(self, eye):
         """计算眼睛纵横比(EAR)"""
         # 计算垂直距离
@@ -98,13 +100,16 @@ class BlinkDetector:
             })
 
             # 可视化标注
-            frame = self._draw_annotations(frame, left_eye, right_eye, smooth_ear)
+            if self.draw_annotations:
+                frame = self._draw_annotations(frame, left_eye, right_eye, smooth_ear)
 
         return result, frame
 
     def _draw_annotations(self, frame, left_eye, right_eye, ear):
         """绘制检测结果标注"""
         # 绘制眼部区域
+        if not self.draw_annotations:
+            return frame
         left_eye_hull = cv2.convexHull(left_eye)
         right_eye_hull = cv2.convexHull(right_eye)
         cv2.drawContours(frame, [left_eye_hull], -1, (0, 255, 0), 1)
