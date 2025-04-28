@@ -54,6 +54,9 @@ class CameraWidget(QLabel):
         self.blink_counter = 0
         self.last_blink_time = time.time()
 
+        self.current_face_feature = None
+        self.current_prob = 0.0
+        self.registration_enabled = False
     def set_detection_method(self, method):
         """设置检测方法接口"""
         self.detection_method = method
@@ -170,6 +173,12 @@ class CameraWidget(QLabel):
                 # 转换坐标格式为(x,y,w,h)
                 faces = []
                 if boxes is not None:
+                    if len(boxes) == 1:
+                        self.current_face_feature = self.face_system.get_embedding(img_pil, boxes)
+                        self.current_prob = probs[0]
+                    else:
+                        self.current_face_feature = None
+                        self.current_prob = 0.0
                     for i in range(len(boxes)):
                         faces.append({
                             'box': boxes[i],
@@ -214,6 +223,8 @@ class CameraWidget(QLabel):
                                 (x1, y1 - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX,
                                 0.6, (0, 255, 0), 2)
+
+
 
                 # # 绘制关键点
                 # if 'landmarks' in data:

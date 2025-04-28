@@ -124,9 +124,60 @@ class MainWindow(QMainWindow):
         self.controls.update_login_state(True)
         self.status.show_message(f"欢迎 {name}（{sid}）登录成功！")
 
+    # GUI.py
     def _on_register(self, name, sid, pwd):
-        # TODO: 连接实际注册逻辑
-        self.status.show_message(f"用户 {name}（{sid}）注册成功")
+        # 基本输入验证
+        if not all([name, sid, pwd]):
+            self.status.show_message("注册失败：请填写完整信息", is_error=True)
+            return
+
+        # 摄像头状态检查
+        if not self.camera._is_camera_on:
+            self.status.show_message("注册失败：请先开启摄像头", is_error=True)
+            return
+
+        # 人脸检测检查
+        if self.status.face_count.text() != "检测到人脸: 1":
+            self.status.show_message("注册失败：需检测到单张人脸", is_error=True)
+            return
+
+        # 启用注册模式
+        self.camera.registration_enabled = True
+
+        # 获取检测数据
+        if (self.camera.current_prob > 0.99 and
+                self.camera.liveness_status and
+                self.camera.current_face_feature is not None):
+
+            # 创建用户信息字典
+            user_data = {
+                "name": name,
+                "sid": sid,
+                "password": pwd,
+                "embedding": self.camera.current_face_feature[0].tolist()
+            }
+
+            # 控制台输出（后续可替换为数据库存储）
+            print("新用户注册成功:")
+            print(f"姓名: {user_data['name']}")
+            print(f"学号: {user_data['sid']}")
+            print(f"特征值样例: {user_data['embedding'][:5]}")
+
+            # 更新用户信息显示
+            if self.user_info:
+                self.user_info.update_feature(user_data['embedding'])
+
+            self.status.show_message(f"用户 {name} 注册成功")
+        else:
+            error_msg = "注册失败："
+            if self.camera.current_prob <= 0.99:
+                error_msg += f" 置信度不足({self.camera.current_prob:.2f})"
+            if not self.camera.liveness_status:
+                error_msg += " 活体检测未通过"
+            self.status.show_message(error_msg, is_error=True)
+
+        # 重置注册模式
+        self.camera.registration_enabled = False
 
     def _on_logout(self):
         self.is_logged_in = False

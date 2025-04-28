@@ -20,7 +20,7 @@ class FaceRecognitionSystem:
         )
 
         # 初始化FaceNet模型
-        self.resnet = InceptionResnetV1(pretrained='vggface2').half().eval().to(detcfg.device)
+        self.resnet = InceptionResnetV1(pretrained='vggface2').eval().to(detcfg.device)
         self._init_preprocess()
 
         # 注册用户特征库 {user_id: embedding}
@@ -51,9 +51,15 @@ class FaceRecognitionSystem:
         return boxes, probs, landmarks
 
     def get_embedding(self, img, boxes):
+        if not isinstance(img, Image.Image):
+            # 如果是文件路径或numpy数组，转换为PIL Image
+            if isinstance(img, np.ndarray):
+                img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            else:
+                img = Image.open(img).convert('RGB')
+
         # 提取特征
         embeddings = []
-        img = Image.open(img).convert('RGB')
         if boxes is not None:
             face_tensors = []
             for box in boxes:
