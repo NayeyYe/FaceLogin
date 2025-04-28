@@ -145,7 +145,7 @@ class CameraWidget(QLabel):
 
         # 动态调整检测频率
         current_time = time.time()
-        if current_time - self.last_blink_time > 15.0:  # 每秒重置计数器
+        if current_time - self.last_blink_time > 15.0:  # 每15秒重置计数器
             self.blink_counter = 0
             self.last_blink_time = current_time
 
