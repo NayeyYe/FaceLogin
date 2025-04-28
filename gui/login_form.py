@@ -91,11 +91,13 @@ class UserInfoWidget(QWidget):
 
         self.name_label = QLabel(name)
         self.sid_label = QLabel(sid)
-        self.feature_label = QLabel(str(face_feature[:5] if face_feature else None))
+        self.feature_label = QLabel(str(face_feature[:1] if face_feature else None))
+        self.similarity_label = QLabel("")
 
         form_layout.addRow("姓名:", self.name_label)
         form_layout.addRow("学号:", self.sid_label)
         form_layout.addRow("特征值:", self.feature_label)
+        form_layout.addRow("登录相似度:", self.similarity_label)
 
         # 美化样式
         info_style = """
@@ -114,3 +116,10 @@ class UserInfoWidget(QWidget):
     def update_feature(self, new_feature):
         """更新特征值显示"""
         self.feature_label.setText(str(new_feature[:5]) if new_feature else None)
+
+    def update_similarity(self, similarity):
+        """更新相似度显示"""
+        self.similarity_label.setText(f"{similarity:.2%}")
+        # 根据相似度设置颜色
+        color = "#4CAF50" if similarity >= 0.95 else "#FF5722"
+        self.similarity_label.setStyleSheet(f"color: {color};")

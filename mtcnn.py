@@ -109,11 +109,11 @@ class FaceRecognitionSystem:
 
         return img
 
-    def calculate_similarity(self, embeddings, metric='cosine'):
+    def calculate_similarity(self, embeddings1, embeddings2, metric='cosine'):
         """计算特征相似度矩阵"""
         if metric == 'cosine':
-            norm = np.linalg.norm(embeddings, axis=1, keepdims=True)
-            return np.dot(embeddings, embeddings.T) / (norm * norm.T)
+            norm = np.linalg.norm(embeddings1, axis=1, keepdims=True)
+            return np.dot(embeddings1, embeddings2.T) / (norm * norm.T)
         elif metric == 'euclidean':
             dist = np.linalg.norm(embeddings[:, None] - embeddings, axis=2)
             return 1 / (1 + dist)
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     embeddings = system.get_embedding(img_path, boxes)
     print(embeddings.shape)
     # 计算相似度矩阵
-    sim_matrix = system.calculate_similarity(embeddings) if len(embeddings) > 0 else None
+    sim_matrix = system.calculate_similarity(embeddings, embeddings) if len(embeddings) > 0 else None
     print(sim_matrix)
     # 可视化结果
     vis_img = system.draw_detections(cv2.imread(img_path), boxes, probs, landmarks, sim_matrix)
