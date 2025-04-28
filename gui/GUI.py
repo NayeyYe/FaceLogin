@@ -188,12 +188,15 @@ class MainWindow(QMainWindow):
     def _show_validation_errors(self):
         error_msg = "验证失败："
         conditions = []
+
         if self.camera.current_prob <= 0.99:
             conditions.append(f"置信度({self.camera.current_prob:.2f}<0.99)")
         if not self.camera.liveness_status:
             conditions.append("活体检测未通过")
         if self.camera.current_face_feature is None:
             conditions.append("未获取人脸特征")
+        if abs(self.camera.current_angles[0]) < 85 or abs(self.camera.current_angles[1]) < 5 or abs(self.camera.current_angles[2]) < 5:
+            conditions.append("未正对摄像头！")
         self.status.show_message(error_msg + " | ".join(conditions), is_error=True)
 
     def _calculate_similarity(self, registered_data):

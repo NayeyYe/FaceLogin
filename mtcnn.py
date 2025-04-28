@@ -47,8 +47,48 @@ class FaceRecognitionSystem:
 
         # 执行检测
         boxes, probs, landmarks = self.mtcnn.detect(img, landmarks=True)
+        # 新增姿态角度计算
+        angles = []
+        if landmarks is not None:
+            for lm in landmarks:
+                angles.append(self.estimate_head_pose(lm))
 
-        return boxes, probs, landmarks
+        return boxes, probs, landmarks, angles
+
+    # 在FaceRecognitionSystem类中新增以下方法
+    def estimate_head_pose(self, landmarks):
+        """
+        基于5点特征估计头部姿态角度（单位：度）
+        :param landmarks: MTCNN返回的5个特征点坐标
+        :return: (pitch, yaw, roll) 俯仰角/偏航角/翻滚角
+        """
+        # 特征点索引定义（根据MTCNN输出顺序）
+        LEFT_EYE = 0
+        RIGHT_EYE = 1
+        NOSE = 2
+        MOUTH_LEFT = 3
+        MOUTH_RIGHT = 4
+
+        # 转换为numpy数组方便计算
+        points = np.array(landmarks, dtype=np.float32)
+
+        # 计算两眼连线的旋转角度（Roll）
+        dX = points[RIGHT_EYE][0] - points[LEFT_EYE][0]
+        dY = points[RIGHT_EYE][1] - points[LEFT_EYE][1]
+        roll = np.degrees(np.arctan2(dY, dX))
+        roll = float(roll)
+        # 计算鼻尖相对眼线的高度（Pitch）
+        eye_center = (points[LEFT_EYE] + points[RIGHT_EYE]) / 2
+        nose_vector = points[NOSE] - eye_center
+        pitch = np.degrees(np.arctan2(nose_vector[1], np.linalg.norm(nose_vector[:1])))
+        pitch = float(pitch)
+        # 计算嘴部对称性（Yaw）
+        mouth_center = (points[MOUTH_LEFT] + points[MOUTH_RIGHT]) / 2
+        yaw_vector = mouth_center - eye_center
+        yaw = np.degrees(np.arctan2(yaw_vector[0], np.linalg.norm(yaw_vector)))
+        yaw = float(yaw)
+
+        return pitch, yaw, roll
 
     def get_embedding(self, img, boxes):
         if not isinstance(img, Image.Image):

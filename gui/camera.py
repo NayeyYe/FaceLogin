@@ -44,6 +44,7 @@ class CameraWidget(QLabel):
         self.last_blink_time = time.time()
         self.current_face_feature = None
         self.current_prob = 0.0
+        self.current_angles = []
         self.registration_enabled = False
 
         self._timer = QTimer(self)
@@ -151,15 +152,16 @@ class CameraWidget(QLabel):
     def _mtcnn_detection(self, frame):
         try:
             img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            boxes, probs, landmarks = self.face_system.detect_and_extract(img_pil)
+            boxes, probs, landmarks, angles = self.face_system.detect_and_extract(img_pil)
             faces = []
 
             if boxes is not None:
                 self.current_face_feature = self.face_system.get_embedding(img_pil, boxes) if len(boxes) == 1 else None
                 self.current_prob = probs[0] if len(boxes) > 0 else 0.0
+                self.current_angles = angles[0] if len(angles) == 1 else []
 
                 for i in range(len(boxes)):
-                    faces.append({'box': boxes[i], 'prob': probs[i], 'landmarks': landmarks[i]})
+                    faces.append({'box': boxes[i], 'prob': probs[i], 'landmarks': landmarks[i], 'angles': angles[i]})
             return faces
         except Exception as e:
             print(f"MTCNN检测异常: {str(e)}")
@@ -183,7 +185,11 @@ class CameraWidget(QLabel):
                 if 'prob' in data:
                     cv2.putText(frame, f"{data['prob']:.2f}", (x1, y1 - 10),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
+                if 'angles' in data:  # 假设数据中包含angles
+                    pitch, yaw, roll = data['angles']
+                    angle_text = f"P:{pitch:.1f} Y:{yaw:.1f} R:{roll:.1f}"
+                    cv2.putText(frame, angle_text, (x1, y2 + 45),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 0), 1)
         elif self.detection_method == "OpenCV":
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
