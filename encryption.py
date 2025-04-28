@@ -2,7 +2,7 @@
 import bcrypt
 import numpy as np
 from cryptography.fernet import Fernet, InvalidToken
-from config import logscfg
+from config import logscfg, dbcfg
 from logger import setup_logger
 logger = setup_logger(logscfg)
 class BcryptHasher:
@@ -41,7 +41,7 @@ class AESEncryptor:
     """人脸特征加密模块"""
 
     def __init__(self):
-        self.cipher = Fernet(rootcfg.AES_KEY)
+        self.cipher = Fernet(dbcfg.AES_KEY)
 
     def encrypt_feature(self, feature: np.ndarray) -> bytes:
         """
