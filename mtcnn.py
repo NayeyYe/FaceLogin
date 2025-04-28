@@ -112,8 +112,9 @@ class FaceRecognitionSystem:
     def calculate_similarity(self, embeddings1, embeddings2, metric='cosine'):
         """计算特征相似度矩阵"""
         if metric == 'cosine':
-            norm = np.linalg.norm(embeddings1, axis=1, keepdims=True)
-            return np.dot(embeddings1, embeddings2.T) / (norm * norm.T)
+            norm1 = np.linalg.norm(embeddings1, axis=1, keepdims=True) # shape: (n,1)
+            norm2 = np.linalg.norm(embeddings2, axis=1, keepdims=True)  # shape: (m,1)
+            return np.dot(embeddings1, embeddings2.T) / (norm1 * norm2.T)
         elif metric == 'euclidean':
             dist = np.linalg.norm(embeddings1[:, None] - embeddings2, axis=2)
             return 1 / (1 + dist)
