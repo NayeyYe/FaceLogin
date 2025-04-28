@@ -115,7 +115,7 @@ class FaceRecognitionSystem:
             norm = np.linalg.norm(embeddings1, axis=1, keepdims=True)
             return np.dot(embeddings1, embeddings2.T) / (norm * norm.T)
         elif metric == 'euclidean':
-            dist = np.linalg.norm(embeddings[:, None] - embeddings, axis=2)
+            dist = np.linalg.norm(embeddings1[:, None] - embeddings2, axis=2)
             return 1 / (1 + dist)
         else:
             raise ValueError("Unsupported metric")
@@ -136,29 +136,4 @@ class FaceRecognitionSystem:
         return max_uid if max_sim > threshold else None
 
 
-# 使用示例
-if __name__ == "__main__":
-    system = FaceRecognitionSystem()
 
-    # 测试图片路径
-    img_path = detcfg.test_img
-
-    # 执行检测与特征提取
-    boxes, probs, landmarks = system.detect_and_extract(img_path)
-    embeddings = system.get_embedding(img_path, boxes)
-    print(embeddings.shape)
-    # 计算相似度矩阵
-    sim_matrix = system.calculate_similarity(embeddings, embeddings) if len(embeddings) > 0 else None
-    print(sim_matrix)
-    # 可视化结果
-    vis_img = system.draw_detections(cv2.imread(img_path), boxes, probs, landmarks, sim_matrix)
-
-    # 显示结果
-    cv2.imshow("Detection Result", vis_img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    # 注册与验证示例
-    if len(embeddings) > 0:
-        system.register_user("test_user", embeddings[0])
-        print("验证结果:", system.verify_user(embeddings[0]))

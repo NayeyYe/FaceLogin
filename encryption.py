@@ -4,7 +4,6 @@ import numpy as np
 from cryptography.fernet import Fernet, InvalidToken
 from config import rootcfg, logscfg
 from logger import setup_logger
-
 logger = setup_logger(logscfg)
 class BcryptHasher:
     """密码哈希与验证模块"""
@@ -93,22 +92,3 @@ class KeyManager:
         except ValueError:
             return False
 
-
-# 使用示例
-if __name__ == "__main__":
-    # 密码哈希测试
-    password = rootcfg.password
-    hashed = BcryptHasher.generate(password)
-    print(f"哈希结果示例: {hashed}")
-    print(f"验证成功: {BcryptHasher.verify(password, hashed)}")
-    print(f"验证失败: {BcryptHasher.verify('wrongpass', hashed)}")
-
-    # 特征加密测试
-    encryptor = AESEncryptor()
-    test_feature = np.random.randn(512).astype(np.float32)
-    encrypted = encryptor.encrypt_feature(test_feature)
-    decrypted = encryptor.decrypt_feature(encrypted)
-
-    print(f"加密前: {test_feature[:5]}")
-    print(f"解密后: {decrypted[:5]}")
-    print(f"数据一致性: {np.allclose(test_feature, decrypted)}")
