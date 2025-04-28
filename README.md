@@ -110,86 +110,38 @@
 项目结构：
 
 ```
-FaceLogin/
-
-├── core/
-│   ├── auth/                     # 身份认证模块
-│   │   ├── admin_approval.py     # 管理员审批流程控制
-│   │   └── role_manager.py       # 用户权限管理系统
-│   │
-│   ├── detection/                # 人脸检测核心模块
-│   │   ├── detector.py     # MTCNN检测器主实现（12.6KB）
-│   │   ├── facenet_model.py      # FaceNet模型加载
-│   │   └── liveness.py       # 活体验证（眨眼/头部姿态）
-│   │
-│   └── utils/                    # 通用工具
-│       ├── logger.py          # 日志保存
-│       └── encryption.py           # 加密模块（AES/bcrypt）
-│
-├── db/                           # 数据库模块
-│   ├── csv_syncer.py             # CSV同步写入器
-│   ├── info.csv                  # 学生信息CSV镜像
-│   ├── models.py                 # 数据库模型定义（ORM）
-│   └── mysql_connector.py        # MySQL连接池管理（1.4KB）
-│
-├── gui/                          # 图形界面模块
-│   ├── assets/                   # 静态资源
-│   │   └── icons/                # 图标资源
-│   ├── widgets/                  # 自定义组件
-│   │   ├── camera_panel.py       # 摄像头显示组件
-│   │   ├── login_form.py         # 登录表单组件
-│   │   └── status_bar.py         # 状态栏组件
-│   └── GUI.py                    # 主界面窗口类
-│
-├── img/                          # 测试图像存储
-│   └── test.jpeg                 # 测试用示例图像（49.3KB）
-│
-├── logs/                         # 系统日志
-│   └── training/                 # 训练过程日志
-│
-├── scripts/                      # 系统脚本
-│   ├── data_preprocessing/       # 数据预处理脚本
-│   │   ├── gen_onet_samples.py   # ONet训练样本生成
-│   │   ├── gen_pnet_samples.py   # PNet训练样本生成
-│   │   └── gen_rnet_samples.py   # RNet训练样本生成
-│   │
-│   ├── db_init.py                # 数据库初始化脚本（1.1KB）
-│   └── face_encoder.py           # 批量人脸编码工具
-│
-├── tests/                        # 测试套件
-│   ├── data/                     # 测试数据集
-│   │   ├── faces/                # 人脸测试图像
-│   │   └── features/             # 预生成特征向量
-│   │
-│   ├── gui/                      # 界面测试
-│   │   ├── test_widgets.py       # 组件功能测试
-│   │   └── test_windows.py       # 窗口流程测试
-│   │
-│   ├── integration/              # 集成测试
-│   │   ├── test_login.py         # 登录流程测试
-│   │   ├── test_permissions.py   # 权限管理测试
-│   │   └── test_registration.py  # 注册流程测试
-│   │
-│   ├── performance/              # 性能测试
-│   │   ├── test_latency.py       # 延迟测试
-│   │   └── test_resources.py     # 资源消耗测试
-│   │
-│   ├── unit/                     # 单元测试
-│   │   ├── test_database.py      # 数据库操作测试
-│   │   ├── test_detection.py     # 人脸检测测试
-│   │   ├── test_encoder.py       # 特征编码测试
-│   │   └── test_security.py      # 安全模块测试
-│   │
-│   └── test.sql                  # SQL测试脚本（16B）
-│
-├── weights/                      # 模型权重存储
-│   ├── mtcnn_weights.pth         # 完整MTCNN权重（110.5MB）
-│   └── mtcnn.pt                  # 兼容格式权重备份
-│
-├── config.py                     # 主配置文件（数据库连接、路径参数等）
-├── project_tree.py               # 目录结构生成脚本（4.4KB）
-├── README.md                     # 项目说明文档（7.6KB）
-└── temp.md                       # 临时设计文档（6KB）
+└── FaceLogin/
+    ├── db/
+    │   ├── csv_syncer.py
+    │   ├── db_init.py
+    │   ├── info.csv
+    │   └── test.sql
+    ├── gui/
+    │   ├── camera.py
+    │   ├── control_button.py
+    │   ├── GUI.py
+    │   ├── login_form.py
+    │   └── status.py
+    ├── img/
+    │   └── test.jpg
+    ├── logs/
+    │   ├── 20250424_165201.log
+    │   ├── 20250424_165340.log
+    │   ├── 20250424_165920.log
+    │   └── log.txt
+    ├── weights/
+    │   ├── onet.pt
+    │   ├── pnet.pt
+    │   └── rnet.pt
+    ├── config.py
+    ├── encryption.py
+    ├── liveness.py
+    ├── logger.py
+    ├── mtcnn.py
+    ├── project_tree.py
+    ├── README.md
+    ├── shape_predictor_68_face_landmarks.dat
+    └── Test.py
 
 ```
 
