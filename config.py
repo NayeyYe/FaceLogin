@@ -11,24 +11,15 @@ class BaseConfig:
 
         # 文件目录
         self.root_dir = os.path.dirname(__file__)
-        # 核心代码目录
-        self.core_dir = os.path.join(self.root_dir, 'core')
         # 数据保存目录
         self.database_dir = os.path.join(self.root_dir, 'db')
-        self.csv_dir = os.path.join(self.database_dir, 'info')
+        self.csv_dir = os.path.join(self.database_dir, 'info.csv')
         # gui目录
         self.gui_dir = os.path.join(self.root_dir, 'gui')
-        self.assets_dir = os.path.join(self.root_dir, 'assets')
-        self.icons_dir = os.path.join(self.assets_dir, 'icons')
         # logs目录
         self.logs_dir = os.path.join(self.root_dir, 'logs')
-        # 测试目录
-        self.tests_dir = os.path.join(self.root_dir, 'tests')
-        self.data_dir = os.path.join(self.tests_dir, 'data')
-        self.faces_dir = os.path.join(self.data_dir, 'faces')
-        self.features_dir = os.path.join(self.data_dir, 'features')
 
-class RootConfig(BaseConfig):
+class DBConfig(BaseConfig):
     def __init__(self):
         super().__init__()
         self.host = 'localhost'
@@ -67,7 +58,7 @@ class TestConfig(BaseConfig):
         super().__init__()
 
 cfg = BaseConfig()
-rootcfg = RootConfig()
+dbcfg = DBConfig()
 detcfg = DetectionConfig()
 logscfg = LogsConfig()
 

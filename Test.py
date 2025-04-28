@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from config import detcfg, rootcfg
+from config import detcfg, dbcfg
 from liveness import BlinkDetector
 from mtcnn import FaceRecognitionSystem
 from encryption import BcryptHasher, AESEncryptor
@@ -59,7 +59,7 @@ def blinkdetector(self):
 
 def bcrypthasher():
     # 密码哈希测试
-    password = rootcfg.password
+    password = dbcfg.password
     hashed = BcryptHasher.generate(password)
     print(f"哈希结果示例: {hashed}")
     print(f"验证成功: {BcryptHasher.verify(password, hashed)}")
