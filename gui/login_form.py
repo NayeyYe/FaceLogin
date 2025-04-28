@@ -4,26 +4,33 @@ from PyQt5.QtWidgets import (QWidget, QFormLayout, QLineEdit,
 from PyQt5.QtGui import QFont
 
 class LoginForm(QWidget):
-    login_clicked = pyqtSignal(str, str, str)  # 新增student_id
+    login_clicked = pyqtSignal(str, str, str)
     register_clicked = pyqtSignal(str, str, str)
 
     def __init__(self):
         super().__init__()
+        self._init_ui()
+        self._connect_signals()
+
+    def _init_ui(self):
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
-        # 标题
         title = QLabel("用户认证")
         title.setFont(QFont("Arial", 18, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
 
-        # 表单布局
+        self._create_form(layout)
+        self._create_buttons(layout)
+        self.setLayout(layout)
+
+    def _create_form(self, layout):
         form_layout = QFormLayout()
         form_layout.setVerticalSpacing(15)
 
         self.name_input = QLineEdit()
-        self.id_input = QLineEdit()  # 新增学号输入
+        self.id_input = QLineEdit()
         self.pwd_input = QLineEdit()
         self.pwd_input.setEchoMode(QLineEdit.Password)
 
@@ -32,7 +39,7 @@ class LoginForm(QWidget):
         form_layout.addRow("密码:", self.pwd_input)
         layout.addLayout(form_layout)
 
-        # 按钮
+    def _create_buttons(self, layout):
         btn_style = """
             QPushButton {
                 padding: 8px; 
@@ -51,9 +58,8 @@ class LoginForm(QWidget):
 
         layout.addWidget(self.login_btn)
         layout.addWidget(self.register_btn)
-        self.setLayout(layout)
 
-        # 信号连接
+    def _connect_signals(self):
         self.login_btn.clicked.connect(self._on_login)
         self.register_btn.clicked.connect(self._on_register)
 
@@ -71,21 +77,24 @@ class LoginForm(QWidget):
             self.pwd_input.text()
         )
 
-
-# login_form.py 新增UserInfoWidget类
 class UserInfoWidget(QWidget):
     def __init__(self, name, sid, face_feature=None):
         super().__init__()
+        self._init_ui(name, sid, face_feature)
+
+    def _init_ui(self, name, sid, face_feature):
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
 
-        # 标题
         title = QLabel("用户信息")
         title.setFont(QFont("Arial", 18, QFont.Bold))
         title.setAlignment(Qt.AlignCenter)
         layout.addWidget(title)
 
-        # 信息展示表单
+        self._create_info_form(layout, name, sid, face_feature)
+        self.setLayout(layout)
+
+    def _create_info_form(self, layout, name, sid, face_feature):
         form_layout = QFormLayout()
         form_layout.setVerticalSpacing(15)
 
@@ -99,27 +108,16 @@ class UserInfoWidget(QWidget):
         form_layout.addRow("特征值:", self.feature_label)
         form_layout.addRow("登录相似度:", self.similarity_label)
 
-        # 美化样式
-        info_style = """
-            QLabel {
-                font-size: 14px;
-                padding: 5px;
-                border-bottom: 1px solid #eee;
-            }
-        """
+        style = "QLabel { font-size: 14px; padding: 5px; border-bottom: 1px solid #eee; }"
         for label in [self.name_label, self.sid_label, self.feature_label]:
-            label.setStyleSheet(info_style)
+            label.setStyleSheet(style)
 
         layout.addLayout(form_layout)
-        self.setLayout(layout)
 
     def update_feature(self, new_feature):
-        """更新特征值显示"""
         self.feature_label.setText(str(new_feature[:5]) if new_feature else None)
 
     def update_similarity(self, similarity):
-        """更新相似度显示"""
         self.similarity_label.setText(f"{similarity:.2%}")
-        # 根据相似度设置颜色
         color = "#4CAF50" if similarity >= 0.95 else "#FF5722"
         self.similarity_label.setStyleSheet(f"color: {color};")
