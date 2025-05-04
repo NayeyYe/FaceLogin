@@ -1,6 +1,8 @@
+# trash
 .idea/
 __pycache__/
 .git/
+# datasets
 WIDER_train/
 12/
 24/
@@ -11,8 +13,10 @@ testImageList.txt
 trainImageList.txt
 logs/
 shape_predictor_68_face_landmarks.dat
-
+# code
 db/
 project_tree.py
 encryption.py
 
+# reports
+reports/
