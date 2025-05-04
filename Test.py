@@ -6,19 +6,19 @@ from mtcnn import FaceRecognitionSystem
 from encryption import BcryptHasher, AESEncryptor
 
 
-def facerecognition(self):
+def facerecognition():
     system = FaceRecognitionSystem()
 
     # 测试图片路径
     img_path = detcfg.test_img
 
     # 执行检测与特征提取
-    boxes, probs, landmarks = system.detect_and_extract(img_path)
+    boxes, probs, landmarks, angles = system.detect_and_extract(img_path)
     embeddings = system.get_embedding(img_path, boxes)
-    print(embeddings.shape)
+    # print(embeddings.shape)
     # 计算相似度矩阵
     sim_matrix = system.calculate_similarity(embeddings, embeddings) if len(embeddings) > 0 else None
-    print(sim_matrix)
+    # print(sim_matrix)
     # 可视化结果
     vis_img = system.draw_detections(cv2.imread(img_path), boxes, probs, landmarks, sim_matrix)
 
@@ -26,11 +26,6 @@ def facerecognition(self):
     cv2.imshow("Detection Result", vis_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-    # 注册与验证示例
-    if len(embeddings) > 0:
-        system.register_user("test_user", embeddings[0])
-        print("验证结果:", system.verify_user(embeddings[0]))
 
 def blinkdetector(self):
     detector = BlinkDetector()
@@ -75,3 +70,6 @@ def aesencryptor():
     print(f"加密前: {test_feature[:5]}")
     print(f"解密后: {decrypted[:5]}")
     print(f"数据一致性: {np.allclose(test_feature, decrypted)}")
+
+if __name__ == '__main__':
+    facerecognition()

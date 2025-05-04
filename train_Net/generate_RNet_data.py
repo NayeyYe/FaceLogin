@@ -7,6 +7,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from config import detcfg
+
 sys.path.append("../")
 
 from utils.data_format_converter import convert_data
@@ -15,12 +17,10 @@ from utils.utils import save_hard_example, generate_bbox, read_annotation, proce
 from utils.utils import get_landmark_from_lfw_neg, get_landmark_from_celeba
 
 
-# 模型路径
-model_path = '../infer_models'
 
 # 获取P模型
 device = torch.device("cuda")
-pnet = torch.load(os.path.join(model_path, 'PNet.pth'))
+pnet = torch.jit.load(detcfg.pnet_weight)
 pnet.to(device)
 pnet.eval()
 
@@ -157,5 +157,5 @@ if __name__ == '__main__':
     print('开始合成图像文件')
     convert_data(os.path.join(data_path, '24'), os.path.join(data_path, '24', 'all_data'))
     # 删除旧数据
-    print('开始删除就得图像文件')
+    print('开始删除旧的图像文件')
     delete_old_img(data_path, 24)

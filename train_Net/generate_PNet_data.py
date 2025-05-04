@@ -187,7 +187,7 @@ if __name__ == '__main__':
     data_path = '../dataset/'
     # 获取人脸的box图片数据
     print('开始生成bbox图像数据')
-    crop_12_box_image(data_path)
+    # crop_12_box_image(data_path)
     # 获取人脸关键点的数据
     print('开始生成landmark图像数据')
     # 获取lfw negbox，关键点

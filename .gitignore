@@ -1,3 +1,10 @@
 .idea/
 __pycache__/
 .git/
+WIDER_train/
+12/
+24/
+48/
+lfw_5590/
+net_7876/
+logs/

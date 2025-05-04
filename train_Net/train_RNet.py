@@ -9,8 +9,7 @@ from torch.utils.data import DataLoader
 
 sys.path.append("../")
 
-from models.Loss import ClassLoss, BBoxLoss, LandmarkLoss, accuracy
-from models.RNet import RNet
+from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, RNet
 from utils.data import CustomDataset
 
 # 设置损失值的比例

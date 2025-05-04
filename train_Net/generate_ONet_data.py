@@ -7,6 +7,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from config import detcfg
+
 sys.path.append("../")
 
 from utils.data_format_converter import convert_data
@@ -15,17 +17,16 @@ from utils.utils import save_hard_example, generate_bbox, read_annotation, conve
 from utils.utils import get_landmark_from_lfw_neg, get_landmark_from_celeba
 
 # 模型路径
-model_path = '../infer_models'
 
 device = torch.device("cuda")
 # 获取P模型
-pnet = torch.load(os.path.join(model_path, 'PNet.pth'))
+pnet = torch.jit.load(detcfg.pnet_weight)
 pnet.to(device)
 pnet.eval()
 softmax_p = torch.nn.Softmax(dim=0)
 
 # 获取R模型
-rnet = torch.load(os.path.join(model_path, 'RNet.pth'))
+rnet = torch.jit.load(detcfg.rnet_weight)
 rnet.to(device)
 rnet.eval()
 softmax_r = torch.nn.Softmax(dim=-1)

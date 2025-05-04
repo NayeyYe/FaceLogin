@@ -152,7 +152,7 @@ class CameraWidget(QLabel):
     def _mtcnn_detection(self, frame):
         try:
             img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-            boxes, probs, landmarks, angles = self.face_system.detect_and_extract(img_pil)
+            boxes, probs, landmarks, angles = self.face_system.detect_and_extract(frame)
             faces = []
 
             if boxes is not None:

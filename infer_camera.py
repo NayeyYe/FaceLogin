@@ -1,33 +1,28 @@
-import argparse
 import os
 
 import cv2
 import numpy as np
 import torch
-
+from config import detcfg
 from utils.utils import generate_bbox, py_nms, convert_to_square
 from utils.utils import pad, calibrate_box, processed_image
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--model_path', type=str, default='infer_models',      help='PNet、RNet、ONet三个模型文件存在的文件夹路径')
-args = parser.parse_args()
 
 device = torch.device("cuda")
 
 # 获取P模型
-pnet = torch.jit.load(os.path.join(args.model_path, 'PNet.pth'))
+pnet = torch.jit.load(detcfg.pnet_weight)
 pnet.to(device)
 softmax_p = torch.nn.Softmax(dim=0)
 pnet.eval()
 
 # 获取R模型
-rnet = torch.jit.load(os.path.join(args.model_path, 'RNet.pth'))
+rnet = torch.jit.load(detcfg.rnet_weight)
 rnet.to(device)
 softmax_r = torch.nn.Softmax(dim=-1)
 rnet.eval()
 
 # 获取R模型
-onet = torch.jit.load(os.path.join(args.model_path, 'ONet.pth'))
+onet = torch.jit.load(detcfg.onet_weight)
 onet.to(device)
 softmax_o = torch.nn.Softmax(dim=-1)
 onet.eval()
@@ -202,6 +197,7 @@ def detect_onet(im, dets, thresh):
     keep = py_nms(boxes_c, 0.6, mode='Minimum')
     boxes_c = boxes_c[keep]
     landmark = landmark[keep]
+    landmark = landmark.reshape(-1, 5, 2)
     return boxes_c, landmark
 
 

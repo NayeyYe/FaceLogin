@@ -9,27 +9,26 @@ from torch.utils.data import DataLoader
 
 sys.path.append("../")
 
-from models.Loss import ClassLoss, BBoxLoss, LandmarkLoss, accuracy
-from models.ONet import ONet
+from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, PNet
 from utils.data import CustomDataset
 
 # 设置损失值的比例
 radio_cls_loss = 1.0
 radio_bbox_loss = 0.5
-radio_landmark_loss = 1.0
+radio_landmark_loss = 0.5
 
 # 训练参数值
-data_path = '../dataset/48/all_data'
+data_path = '../dataset/12/all_data'
 batch_size = 384
 learning_rate = 1e-3
-epoch_num = 22
+epoch_num = 30
 model_path = '../infer_models'
 
-# 获取O模型
+# 获取P模型
 device = torch.device("cuda")
-model = ONet()
+model = PNet()
 model.to(device)
-summary(model, (3, 48, 48))
+summary(model, (3, 12, 12))
 
 # 获取数据
 train_dataset = CustomDataset(data_path)
@@ -64,11 +63,10 @@ for epoch in range(epoch_num):
         if batch_id % 100 == 0:
             acc = accuracy(class_out, label)
             print('[%s] Train epoch %d, batch %d, total_loss: %f, cls_loss: %f, box_loss: %f, landmarks_loss: %f, '
-                  'accuracy：%f' % (
-                      datetime.now(), epoch, batch_id, total_loss, cls_loss, box_loss, landmarks_loss, acc))
+                  'accuracy：%f' % (datetime.now(), epoch, batch_id, total_loss, cls_loss, box_loss, landmarks_loss, acc))
     scheduler.step()
 
     # 保存模型
     if not os.path.exists(model_path):
         os.makedirs(model_path)
-    torch.jit.save(torch.jit.script(model), os.path.join(model_path, 'ONet.pth'))
+    torch.jit.save(torch.jit.script(model), os.path.join(model_path, 'PNet.pth'))

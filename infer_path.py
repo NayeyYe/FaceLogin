@@ -1,35 +1,29 @@
-import argparse
+
 import os
 
 import cv2
 import numpy as np
 import torch
-
+from config import detcfg
 from utils.utils import generate_bbox, py_nms, convert_to_square
 from utils.utils import pad, calibrate_box, processed_image
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--model_path', type=str, default='infer_models',      help='PNet、RNet、ONet三个模型文件存在的文件夹路径')
-parser.add_argument('--image_path', type=str, default='dataset/test.jpg',  help='需要预测图像的路径')
-args = parser.parse_args()
-
 
 device = torch.device("cuda")
 
 # 获取P模型
-pnet = torch.jit.load(os.path.join(args.model_path, 'PNet.pth'))
+pnet = torch.jit.load(detcfg.pnet_weight)
 pnet.to(device)
 softmax_p = torch.nn.Softmax(dim=0)
 pnet.eval()
 
 # 获取R模型
-rnet = torch.jit.load(os.path.join(args.model_path, 'RNet.pth'))
+rnet = torch.jit.load(detcfg.rnet_weight)
 rnet.to(device)
 softmax_r = torch.nn.Softmax(dim=-1)
 rnet.eval()
 
 # 获取R模型
-onet = torch.jit.load(os.path.join(args.model_path, 'ONet.pth'))
+onet = torch.jit.load(detcfg.onet_weight)
 onet.to(device)
 softmax_o = torch.nn.Softmax(dim=-1)
 onet.eval()
@@ -203,6 +197,7 @@ def detect_onet(im, dets, thresh):
     keep = py_nms(boxes_c, 0.6, mode='Minimum')
     boxes_c = boxes_c[keep]
     landmark = landmark[keep]
+    landmark = landmark.reshape(-1, 5, 2)
     return boxes_c, landmark
 
 
@@ -241,20 +236,20 @@ def draw_face(image_path, boxes_c, landmarks):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     # 画关键点
     for i in range(landmarks.shape[0]):
-        for j in range(len(landmarks[i]) // 2):
-            cv2.circle(img, (int(landmarks[i][2 * j]), int(int(landmarks[i][2 * j + 1]))), 2, (0, 0, 255))
+        for j in range(landmarks.shape[1]):
+            cv2.circle(img, (int(landmarks[i][j][0]), int(int(landmarks[i][j][1]))), 2, (0, 0, 255))
     cv2.imshow('result', img)
     cv2.waitKey(0)
 
 
 if __name__ == '__main__':
     # 预测图片获取人脸的box和关键点
-    boxes_c, landmarks = infer_image(args.image_path)
+    boxes_c, landmarks = infer_image(detcfg.test_img)
     print(boxes_c)
     print("*"*50)
     print(landmarks)
     # 把关键画出来
     if boxes_c is not None:
-        draw_face(image_path=args.image_path, boxes_c=boxes_c, landmarks=landmarks)
+        draw_face(image_path=detcfg.test_img, boxes_c=boxes_c, landmarks=landmarks)
     else:
         print('image not have face')

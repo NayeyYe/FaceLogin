@@ -37,10 +37,11 @@ class DetectionConfig(BaseConfig):
         self.img_dir = os.path.join(self.root_dir, 'img')
         self.test_img = os.path.join(self.img_dir, 'test.jpg')
         # 预训练权重
-        self.weight_dir = os.path.join(self.root_dir, 'weights')
-        self.pnet_weight = os.path.join(self.weight_dir, 'pnet.pt')
-        self.onet_weight = os.path.join(self.weight_dir, 'onet.pt')
-        self.rnet_weight = os.path.join(self.weight_dir, 'rnet.pt')
+        self.model_dir = os.path.join(self.root_dir, 'models')
+        self.pnet_weight = os.path.join(self.model_dir, 'PNet.pth')
+        self.rnet_weight = os.path.join(self.model_dir, 'RNet.pth')
+        self.onet_weight = os.path.join(self.model_dir, 'ONet.pth')
+
 
 
 class GUIConfig(BaseConfig):
