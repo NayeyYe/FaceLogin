@@ -7,6 +7,8 @@ from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
 from torch.utils.data import DataLoader
 
+from config import detcfg
+
 sys.path.append("../")
 
 from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
@@ -18,14 +20,14 @@ radio_bbox_loss = 0.5
 radio_landmark_loss = 1.0
 
 # 训练参数值
-data_path = '../dataset/48/all_data'
+data_path = os.path.join(detcfg.dataset_dir, '48', 'all_data')
 batch_size = 384
 learning_rate = 1e-3
 epoch_num = 22
-model_path = '../infer_models'
+model_path = detcfg.model_dir
 
 # 获取O模型
-device = torch.device("cuda")
+device = detcfg.device
 model = ONet()
 model.to(device)
 summary(model, (3, 48, 48))
@@ -70,4 +72,4 @@ for epoch in range(epoch_num):
     # 保存模型
     if not os.path.exists(model_path):
         os.makedirs(model_path)
-    torch.jit.save(torch.jit.script(model), os.path.join(model_path, 'ONet.pth'))
+    torch.jit.save(torch.jit.script(model), detcfg.onet_weight)

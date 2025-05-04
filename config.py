@@ -29,34 +29,25 @@ class DBConfig(BaseConfig):
         self.database = 'facelogin'
         self.AES_KEY = Fernet.generate_key()
 
-
 class DetectionConfig(BaseConfig):
     def __init__(self):
         super().__init__()
         # 图片保存目录
         self.img_dir = os.path.join(self.root_dir, 'img')
         self.test_img = os.path.join(self.img_dir, 'test.jpg')
+        # 数据集
+        self.dataset_dir = os.path.join(self.root_dir, 'dataset')
+        self.train_dir = os.path.join(self.dataset_dir, 'WIDER_train')
         # 预训练权重
         self.model_dir = os.path.join(self.root_dir, 'models')
         self.pnet_weight = os.path.join(self.model_dir, 'PNet.pth')
         self.rnet_weight = os.path.join(self.model_dir, 'RNet.pth')
         self.onet_weight = os.path.join(self.model_dir, 'ONet.pth')
 
-
-
-class GUIConfig(BaseConfig):
-    def __init__(self):
-        super().__init__()
-
-
 class LogsConfig(BaseConfig):
     def __init__(self):
         super().__init__()
         self.logs_dir = os.path.join(self.root_dir, 'logs')
-
-class TestConfig(BaseConfig):
-    def __init__(self):
-        super().__init__()
 
 cfg = BaseConfig()
 dbcfg = DBConfig()

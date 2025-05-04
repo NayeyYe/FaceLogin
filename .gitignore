@@ -7,4 +7,12 @@ WIDER_train/
 48/
 lfw_5590/
 net_7876/
+testImageList.txt
+trainImageList.txt
 logs/
+shape_predictor_68_face_landmarks.dat
+
+db/
+project_tree.py
+encryption.py
+

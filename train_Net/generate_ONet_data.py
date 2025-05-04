@@ -18,7 +18,7 @@ from utils.utils import get_landmark_from_lfw_neg, get_landmark_from_celeba
 
 # 模型路径
 
-device = torch.device("cuda")
+device = detcfg.device
 # 获取P模型
 pnet = torch.jit.load(detcfg.pnet_weight)
 pnet.to(device)
@@ -207,9 +207,9 @@ def crop_48_box_image(data_path, filename, min_face_size, scale_factor, p_thresh
 
 
 if __name__ == '__main__':
-    data_path = '../dataset/'
-    base_dir = '../dataset/WIDER_train/'
-    filename = '../dataset/wider_face_train.txt'
+    data_path = detcfg.dataset_dir
+    base_dir = detcfg.train_dir
+    filename = os.path.join(data_path, 'wider_face_train.txt')
     min_face_size = 20
     scale_factor = 0.79
     p_thresh = 0.6

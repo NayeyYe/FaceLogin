@@ -132,9 +132,9 @@ def crop_24_box_image(data_path, filename, min_face_size, scale_factor, thresh):
 
 
 if __name__ == '__main__':
-    data_path = '../dataset/'
-    base_dir = '../dataset/WIDER_train/'
-    filename = '../dataset/wider_face_train.txt'
+    data_path = detcfg.dataset_dir
+    base_dir = detcfg.train_dir
+    filename = os.path.join(data_path, 'wider_face_train.txt')
     min_face_size = 20
     scale_factor = 0.79
     thresh = 0.6

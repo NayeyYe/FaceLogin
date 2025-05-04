@@ -4,8 +4,11 @@ from datetime import datetime
 
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
+from torch.xpu import device
 from torchsummary import summary
 from torch.utils.data import DataLoader
+
+from config import detcfg
 
 sys.path.append("../")
 
@@ -18,14 +21,14 @@ radio_bbox_loss = 0.5
 radio_landmark_loss = 0.5
 
 # 训练参数值
-data_path = '../dataset/12/all_data'
+data_path = os.path.join(detcfg.dataset_dir, '12', 'all_data')
 batch_size = 384
 learning_rate = 1e-3
 epoch_num = 30
-model_path = '../infer_models'
+model_path = detcfg.model_dir
 
 # 获取P模型
-device = torch.device("cuda")
+device = detcfg.device
 model = PNet()
 model.to(device)
 summary(model, (3, 12, 12))
@@ -69,4 +72,4 @@ for epoch in range(epoch_num):
     # 保存模型
     if not os.path.exists(model_path):
         os.makedirs(model_path)
-    torch.jit.save(torch.jit.script(model), os.path.join(model_path, 'PNet.pth'))
+    torch.jit.save(torch.jit.script(model), detcfg.pnet_weight)

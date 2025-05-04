@@ -5,6 +5,8 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
+from config import detcfg
+
 sys.path.append("../")
 
 from utils.data_format_converter import convert_data
@@ -184,7 +186,7 @@ def crop_12_box_image(data_path):
 
 
 if __name__ == '__main__':
-    data_path = '../dataset/'
+    data_path = detcfg.dataset_dir
     # 获取人脸的box图片数据
     print('开始生成bbox图像数据')
     # crop_12_box_image(data_path)
