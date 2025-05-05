@@ -1,4 +1,3 @@
-# blink_detection.py
 import os
 from config import cfg
 import cv2

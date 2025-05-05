@@ -1,4 +1,3 @@
-# src-utils/logger.py
 import sys
 import os
 import atexit

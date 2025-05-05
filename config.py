@@ -2,7 +2,6 @@ import os
 import torch
 from cryptography.fernet import Fernet
 
-
 class BaseConfig:
     def __init__(self):
         # 硬件配置
