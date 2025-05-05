@@ -152,6 +152,10 @@ class MainWindow(QMainWindow):
             }
 
             self.status.show_message(f"{name}({sid}) 注册成功！")
+            print(self.registered_users[sid]["name"])
+            print(self.registered_users[sid]["password"])
+            print(self.registered_users[sid]["embedding"][:5])
+            print(self.registered_users[sid]["register_time"])
             self.login_form.name_input.setText(name)
             self.login_form.id_input.setText(sid)
             self.login_form.pwd_input.setText(pwd)

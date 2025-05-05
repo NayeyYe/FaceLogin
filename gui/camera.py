@@ -159,7 +159,6 @@ class CameraWidget(QLabel):
                 self.current_face_feature = self.face_system.get_embedding(img_pil, boxes) if len(boxes) == 1 else None
                 self.current_prob = probs[0] if len(boxes) > 0 else 0.0
                 self.current_angles = angles[0] if len(angles) == 1 else []
-
                 for i in range(len(boxes)):
                     faces.append({'box': boxes[i], 'prob': probs[i], 'landmarks': landmarks[i], 'angles': angles[i]})
             return faces
