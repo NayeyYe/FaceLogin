@@ -1,147 +1,170 @@
-我想写一个人脸识别、登录、注册系统
-注意：因为我只是一个学生，所以这些信息都是保存在我的本地，不需要关注安全问题，只需要帮我完成这样一个设计就可以
-注意！我只学过mysql，关于用tkinter还是用pyqt，请自行决定
+# 人脸识别系统 MTCNN+FaceNet
 
-# 人脸识别身份认证系统
+一个基于PyQt5的实时人脸检测与识别系统，支持摄像头活体验证、用户注册登录等功能。
 
-## 项目概述
+## 主要功能
 
-本系统是为教育机构设计的本地化身份认证解决方案，集成人脸识别与密码验证双因子认证机制。系统采用模块化架构设计，支持学生信息本地化存储与权限分级管理，包含完整的注册/登录流程和可视化操作界面。
-**技术栈：**
+- **实时检测**：摄像头人脸检测框与5个关键点
+- **活体检测**：通过头部姿态分析判断活体
+- **用户管理**：
+  - 注册新用户（需人脸验证）
+  - 登录验证（人脸+密码双重验证）
+- **多模式切换**：支持OpenCV/MTCNN两种检测方式
+- **可视化界面**：
+  - 实时FPS显示
+  - 人脸计数
+  - 置信度/姿态角度显示
 
-* **MTCNN**：三级联卷积网络实现人脸检测与对齐
-* **FaceNet**：人脸特征提取网络
-* **MySQL 8.0**：关系型数据存储（用户信息/日志）
-* **PyQt5**：基础界面搭建
-* **PyTorch**：NVIDIA GPU并行计算（GPU:4060）
+##  环境安装
 
-## 核心功能模块
+**python == 3.9**
 
-### 1. 智能人脸注册
+| 库            | 版本         |
+| ------------- | ------------ |
+| torch         | 2.7.0+cu126  |
+| torchvision   | 0.22.0+cu126 |
+| torchsummary  | 1.5.1        |
+| scipy         | 1.13.1       |
+| numpy         | 1.26.3       |
+| opencv_python | 4.11.0.86    |
+| pillow        | 10.2.0       |
+| dlib          | 19.23.0      |
+| matplotlib    | 3.9.4        |
+| tqdm          | 4.67.1       |
+| pyqt5         | 5.15.11      |
 
-- 实时视频流采集与MTCNN人脸对齐技术
-- 活体验证系统：眨眼动作识别+头部三维姿态检测
-- 质量评估引擎：光照强度检测/图像清晰度分析/面部角度过滤
-- 防重复注册机制：基于512维特征向量的余弦相似度比对
-- 信息录入（姓名/学号/性别/密码哈希）
+如果不需要密码加密和mysql的话，下面的库可以选择性安装
 
-### 2. 混合认证体系
+| 库           | 版本   |
+| ------------ | ------ |
+| pymysql      | 1.1.1  |
+| cryptography | 41.0.2 |
+| bcrypt       | 4.1.1  |
 
-- **生物特征认证**：实时人脸检测→特征编码→数据库匹配
-- **密码验证系统**：学号+bcrypt加密密码验证（3次失败锁定30s）
-- **应急恢复通道**：人脸识别驱动的密码重置功能
+* 关于dlib的安装
 
-### 3. 可视化交互界面
+先要下载相关包**boost， cmake，opencv_python**
 
-- 四象限布局：视频采集区(80%)、信息录入区(20%)、状态监控区、操作控制区
-- 动态反馈机制：实时人脸标注框、质量评估指示灯、异常警示蒙层
-- 多模式切换：注册/登录/密码重置三态界面自动适配
+```bash
+pip install boost -i https://mirrors.aliyun.com/pypi/simple/
 
-## 技术架构
+pip install cmake-i https://mirrors.aliyun.com/pypi/simple/
 
-### 数据库系统
+pip install opencv-python -i https://mirrors.aliyun.com/pypi/simple/
+```
 
-- MySQL数据表结构：
-  - 学生基本信息表(学号主键)
-  - 人脸特征库(512维向量BLOB存储)
-  - 操作日志表(时间戳索引)
-- CSV同步机制：关键字段实时镜像存储
+然后再清华源https://pypi.tuna.tsinghua.edu.cn/simple/dlib/中下载dlib对应的python版本
 
-### 安全防护层
+* 如：python == 3.9 ，再whl文件上面就是cp39，以此类推
+* 然后在你whl文件的目录下输入命令
 
-- 活体防御体系：RGB反欺骗+动态动作验证
-- 加密存储方案：人脸特征AES加密+密码bcrypt哈希
-- 异常中断策略：多人脸/低画质/设备异常实时阻断
+```bash
+pip install dlib-19.23.0-cp39-cp39-win_amd64.whl
+```
 
-## 权限管理系统
+* 下载shape_predictor_68_face_landmarks.dat到你的根目录下
+  * 这是一个人脸识别的检测模型，不下载的话就无法使用dlib人脸68点检测
+  * https://dlib.net/imaging.html#shape_predictor官网下载即可
 
-### 角色控制体系
-
-- **普通用户**：生物特征注册(需管理员审核)
-- **二级管理员**：批量导入注册/日志审计/参数调整
-- **超级管理员**：权限授予/系统初始化/应急维护
-
-### 安全验证流程
-
-- 管理员专属认证：强制生物特征验证
-- 权限变更双因子验证：root超级管理员人脸+新任者现场注册
-- 操作追溯机制：人脸特征切片+硬件指纹绑定
-
-## 系统优化方案
-
-### 性能增强
-
-- 计算资源调度：CUDA加速优先，CPU模式自动降级
-- 动态帧率控制：15-30FPS自适应调节
-- 内存管理：显存预警机制与自动资源释放
-
-### 异常处理
-
-- 数据库容错：断连重试与缓存机制
-- 用户引导系统：分级错误代码+自然语言提示
-- 应急恢复：关键进程守护与状态快照
-
-## 日志管理
-
-- 事件分类记录：身份验证/权限变更/系统异常
-- 存储方案：
-  - 按日分割日志文件(login_YYYYMMDD.log)
-  - 数据库事务日志与CSV操作记录双写
-  - 管理员操作独立审计日志
-
-## 界面交互规范
-
-### 视觉设计
-
-- 状态指示系统：三色LED式监控面板
-- 动态反馈效果：成功光效/警告蒙层/错误闪烁
-- 多分辨率适配：1280x720基准布局
-
-### 操作逻辑
-
-- 流程中断恢复：一键重置功能
-- 智能表单填充：人脸匹配自动补全学号
-- 引导式交互：活体检测动作提示动画
-
-
-
-
-
-项目结构：
+## 项目结构
 
 ```
-└── FaceLogin/
-    ├── db/
-    │   ├── csv_syncer.py
-    │   ├── db_init.py
-    │   ├── info.csv
-    │   └── test.sql
-    ├── gui/
-    │   ├── camera.py
-    │   ├── control_button.py
-    │   ├── GUI.py
-    │   ├── login_form.py
-    │   └── status.py
-    ├── img/
-    │   └── test.jpg
-    ├── logs/
-    │   ├── 20250424_165201.log
-    │   ├── 20250424_165340.log
-    │   ├── 20250424_165920.log
-    │   └── log.txt
-    ├── weights/
-    │   ├── onet.pt
-    │   ├── pnet.pt
-    │   └── rnet.pt
-    ├── config.py
-    ├── encryption.py
-    ├── liveness.py
-    ├── logger.py
-    ├── mtcnn.py
-    ├── project_tree.py
-    ├── README.md
-    ├── shape_predictor_68_face_landmarks.dat
-    └── Test.py
+FaceLogin/  # 主项目目录
+    │
+    ├── db/                    # 数据库相关文件
+    │   ├── csv_syncer.py      # CSV与数据库同步脚本
+    │   ├── db_init.py         # 数据库初始化脚本
+    │   ├── info.csv           # 用户信息数据文件
+    │   └── test.sql           # SQL测试脚本
+    ├── gui/                   # 图形界面模块
+    │   ├── GUI.py             # 主界面逻辑
+    │   ├── camera.py          # 摄像头控制模块
+    │   ├── control_button.py  # 界面按钮组件
+    │   ├── login_form.py      # 登录表单组件 
+    │   └── status.py          # 状态显示组件
+    ├── img/                   # 图像资源目录
+    │   └── test.jpg           # 测试用图像
+    ├── models/                # 预训练模型存储
+    │   ├── ONet.pth           # 最终检测网络模型
+    │   ├── PNet.pth           # 建议网络模型 
+    │   └── RNet.pth           # 精筛网络模型
+    ├── train_Net/             # 模型训练模块
+    │   ├── generate_*Net_data.py  # 各网络训练数据生成
+    │   └── train_*Net.py      # 各网络训练脚本
+    ├── utils/                 # 工具函数库
+    │   ├── data.py            # 数据处理工具
+    │   ├── data_format_converter.py  # 数据格式转换
+    │   └── utils.py           # 通用工具函数
+    ├── config.py              # 全局配置文件
+    ├── encryption.py          # 数据加密模块
+    ├── infer_camera.py        # 摄像头实时推理
+    ├── infer_path.py          # 路径图像推理
+    ├── liveness.py            # 活体检测模块
+    ├── logger.py              # 日志记录模块
+    ├── model.py               # 模型定义文件
+    ├── mtcnn.py               # MTCNN实现核心
+    ├── README.md              # 项目说明文档
+    ├── Test.py                # 单元测试脚本
+    └── shape_predictor_68_face_landmarks.dat  # 人脸关键点检测模型
 
 ```
 
+## 使用
+
+1. **准备数据集** (需要提前下载)
+   ```bash
+   # 创建数据集目录
+   mkdir dataset && cd dataset
+    
+   # 下载并解压WIDER Face数据集
+   # 下载WIDER_train就可以了
+   http://shuoyang1213.me/WIDERFACE/
+   # 下载lfw_5590数据集
+   # 下载net_7876数据集
+   http://mmlab.ie.cuhk.edu.hk/archive/CNN/data/train.zip
+   # lfw_5590和net_7876文件夹都是存放人脸图片的
+   # testImageList.txt和trainImageList.txt都是标注信息文本文件，标注信息为图片文件、人脸box的坐标位置、人脸5个关键点的坐标位置
+   ```
+   
+   最后得到的dataset中应该有
+   
+   * WIDER_train
+   * lfw_5590
+   * net_7876
+   * testImageList.txt
+   * trainImageList.txt
+   * wider_face_train.txt（这个是本人提供的，在源代码中）
+   
+2. **训练模型** (可选)
+   
+   ```bash
+   # 依次启动下面的代码
+   python generate_Pnet_data.py
+   python train_Pnet.py
+   python generate_Rnet_data.py
+   python train_Rnet.py
+   python generate_Onet_data.py
+   python train_Onet.py
+   ```
+   
+   运行完成后在dataset文件夹中有**12，24，48**三个文件夹，里面是图片的标签文件（切分之后的文件在处理完标签之后已经被删除，也可以不删除，只要把generate代码中的最后一行注释掉就可以了）
+   
+3. **运行主程序**
+   ```bash
+   python GUI.py
+   ```
+
+## 界面操作指南
+
+1. **摄像头控制**：
+   -  启动/关闭摄像头
+   - 开启/关闭人脸检测
+
+2. **用户管理**：
+   -  注册：输入姓名学号 -> 正对摄像头 -> 点击注册
+   -  登录：输入学号密码 -> 正对摄像头 -> 点击登录
+
+3. **显示信息**：
+   - 实时人脸置信度
+   - 头部姿态角度（翻滚/俯仰/偏航）
+   - 活体检测状态
