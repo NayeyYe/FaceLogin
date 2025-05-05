@@ -9,8 +9,8 @@ WIDER_train/
 48/
 lfw_5590/
 net_7876/
-dataset/testImageList.txt
-dataset/trainImageList.txt
+testImageList.txt
+trainImageList.txt
 logs/
 shape_predictor_68_face_landmarks.dat
 # code

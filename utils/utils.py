@@ -4,6 +4,7 @@ import numpy as np
 import random
 import os
 import cv2
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 
@@ -731,3 +732,36 @@ def save_hard_example(data_path, save_size):
     neg_file.close()
     part_file.close()
     pos_file.close()
+
+
+def plot_metrics(log_dict, save_path):
+    """训练指标可视化函数
+
+    参数：
+        log_dict: 包含训练指标数据的字典
+        save_path: 图片保存路径
+    """
+    plt.figure(figsize=(12, 5))
+
+    # Loss曲线
+    plt.subplot(1, 2, 1)
+    plt.plot(log_dict['epoch'], log_dict['cls_loss'], label='Class Loss')
+    plt.plot(log_dict['epoch'], log_dict['box_loss'], label='Box Loss')
+    plt.plot(log_dict['epoch'], log_dict['landmark_loss'], label='Landmark Loss')
+    plt.plot(log_dict['epoch'], log_dict['total_loss'], 'k--', label='Total Loss')
+    plt.title('Training Loss Trend')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    # 准确率曲线
+    plt.subplot(1, 2, 2)
+    plt.plot(log_dict['epoch'], log_dict['acc'], 'g-', linewidth=2)
+    plt.title('Classification Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (%)')
+
+    # 保存和清理
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300)
+    plt.close()
