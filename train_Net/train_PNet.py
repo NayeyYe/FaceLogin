@@ -3,19 +3,12 @@ import sys
 from datetime import datetime
 sys.path.append("../")
 import numpy as np
-
 from utils.utils import plot_metrics
-
-
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
 from torch.utils.data import DataLoader
-
 from config import detcfg
-
-
-
 from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, PNet
 from utils.data import CustomDataset
 

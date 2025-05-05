@@ -435,7 +435,8 @@ def read_annotation(data_path, label_path):
         if not imagepath:
             break
         # 获取图片的路径
-        imagepath = data_path + 'WIDER_train/images/' + imagepath + '.jpg'
+        imgname = imagepath + '.jpg'
+        imagepath = os.path.join(data_path, 'WIDER_train', 'images', imgname)
         images.append(imagepath)
         # 根据人脸的数目开始读取所有box
         one_image_bboxes = []
