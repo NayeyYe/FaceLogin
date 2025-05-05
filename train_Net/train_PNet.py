@@ -1,15 +1,14 @@
 import os
 import sys
 from datetime import datetime
-
+sys.path.append("../")
 import numpy as np
 
 from utils.utils import plot_metrics
 
-sys.path.append("../")
+
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
-from torch.xpu import device
 from torchsummary import summary
 from torch.utils.data import DataLoader
 

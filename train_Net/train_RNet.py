@@ -1,21 +1,14 @@
 import os
 import sys
 from datetime import datetime
-
-import numpy as np
-
-from utils.utils import plot_metrics
-
 sys.path.append("../")
+import numpy as np
+from utils.utils import plot_metrics
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
 from torch.utils.data import DataLoader
-
 from config import detcfg
-
-
-
 from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, RNet
 from utils.data import CustomDataset
 

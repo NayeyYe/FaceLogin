@@ -7,12 +7,8 @@ import torch
 from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
 from torch.utils.data import DataLoader
-
 from config import detcfg
 from utils.utils import plot_metrics
-
-
-
 from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
 from utils.data import CustomDataset
 
