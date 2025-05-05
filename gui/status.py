@@ -2,7 +2,7 @@ import time
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel,
                              QHBoxLayout, QTextBrowser)
 from PyQt5.QtGui import QColor, QPainter, QFont, QTextCursor
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import QTimer
 
 
 class StatusIndicator(QWidget):
