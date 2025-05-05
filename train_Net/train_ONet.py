@@ -2,9 +2,6 @@ import os
 import sys
 from datetime import datetime
 
-import numpy as np
-
-sys.path.append("../")
 import torch
 from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
@@ -16,7 +13,6 @@ sys.path.append("../")
 
 from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
 from utils.data import CustomDataset
-from utils.utils import plot_metrics
 
 # 设置损失值的比例
 radio_cls_loss = 1.0
@@ -50,19 +46,9 @@ scheduler = MultiStepLR(optimizer, milestones=[6, 14, 20], gamma=0.1)
 class_loss = ClassLoss()
 bbox_loss = BBoxLoss()
 landmark_loss = LandmarkLoss()
-log_dict = {
-    'epoch': [],
-    'cls_loss': [],
-    'box_loss': [],
-    'landmark_loss': [],
-    'total_loss': [],
-    'acc': []
-}
+
 # 开始训练
 for epoch in range(epoch_num):
-    epoch_cls, epoch_box = [], []
-    epoch_landmark, epoch_total = [], []
-    epoch_acc = []
     for batch_id, (img, label, bbox, landmark) in enumerate(train_loader):
         img = img.to(device)
         label = label.to(device).long()
@@ -81,30 +67,9 @@ for epoch in range(epoch_num):
             print('[%s] Train epoch %d, batch %d, total_loss: %f, cls_loss: %f, box_loss: %f, landmarks_loss: %f, '
                   'accuracy：%f' % (
                       datetime.now(), epoch, batch_id, total_loss, cls_loss, box_loss, landmarks_loss, acc))
-            epoch_acc.append(acc.item())
-
-
-        # 收集batch指标
-        epoch_cls.append(cls_loss.item())
-        epoch_box.append(box_loss.item())
-        epoch_landmark.append(landmarks_loss.item())
-        epoch_total.append(total_loss.item())
-
     scheduler.step()
-
-    # 计算epoch平均值
-    log_dict['epoch'].append(epoch)
-    log_dict['cls_loss'].append(np.mean(epoch_cls))
-    log_dict['box_loss'].append(np.mean(epoch_box))
-    log_dict['landmark_loss'].append(np.mean(epoch_landmark))
-    log_dict['total_loss'].append(np.mean(epoch_total))
-    log_dict['acc'].append(np.mean(epoch_acc))
 
     # 保存模型
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     torch.jit.save(torch.jit.script(model), detcfg.onet_weight)
-
-# 生成可视化
-plot_path = os.path.join(detcfg.img_dir, 'ONet_metric.png')
-plot_metrics(log_dict, plot_path)

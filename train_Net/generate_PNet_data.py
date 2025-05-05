@@ -1,12 +1,13 @@
 import os
 import sys
-sys.path.append("../")
+
 import cv2
 import numpy as np
 from tqdm import tqdm
 
 from config import detcfg
 
+sys.path.append("../")
 
 from utils.data_format_converter import convert_data
 from utils.utils import IOU, combine_data_list, crop_landmark_image, delete_old_img
@@ -188,7 +189,7 @@ if __name__ == '__main__':
     data_path = detcfg.dataset_dir
     # 获取人脸的box图片数据
     print('开始生成bbox图像数据')
-    crop_12_box_image(data_path)
+    # crop_12_box_image(data_path)
     # 获取人脸关键点的数据
     print('开始生成landmark图像数据')
     # 获取lfw negbox，关键点

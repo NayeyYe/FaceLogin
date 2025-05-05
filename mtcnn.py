@@ -11,6 +11,15 @@ from infer_camera import infer_image
 
 class FaceRecognitionSystem:
     def __init__(self):
+        # 初始化MTCNN检测器
+        self.mtcnn = MTCNN(
+            keep_all=True,
+            thresholds=[0.6, 0.7, 0.7],
+            post_process=False,
+            device=detcfg.device,
+            select_largest=False
+        )
+
         # 初始化FaceNet模型
         self.resnet = InceptionResnetV1(pretrained='vggface2').eval().to(detcfg.device)
         self._init_preprocess()

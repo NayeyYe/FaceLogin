@@ -1,7 +1,7 @@
 import os
 import pickle
 import sys
-sys.path.append("../")
+
 import cv2
 import numpy as np
 import torch
@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from config import detcfg
 
+sys.path.append("../")
 
 from utils.data_format_converter import convert_data
 from utils.utils import py_nms, combine_data_list, crop_landmark_image, delete_old_img

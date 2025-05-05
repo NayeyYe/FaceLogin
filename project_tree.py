@@ -116,7 +116,7 @@ class FileTreeGenerator:
 if __name__ == "__main__":
     generator = FileTreeGenerator(
         root_path=".",
-        ignore_dirs={'Test', 'Train', '__pycache__', '.git', 'venv', '.idea', 'node_modules', 'dataset', 'logs', 'reports', 'assets'},
+        ignore_dirs={'Test', 'Train', '__pycache__', '.git', 'venv', '.idea', 'node_modules'},
         max_depth=5,
         show_file_counts=True
     )

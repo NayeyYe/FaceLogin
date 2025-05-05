@@ -109,44 +109,39 @@
 
 项目结构：
 
-```bash
-FaceLogin/  # 主项目目录
-    │
-    ├── db/                    # 数据库相关文件
-    │   ├── csv_syncer.py      # CSV与数据库同步脚本
-    │   ├── db_init.py         # 数据库初始化脚本
-    │   ├── info.csv           # 用户信息数据文件
-    │   └── test.sql           # SQL测试脚本
-    ├── gui/                   # 图形界面模块
-    │   ├── GUI.py             # 主界面逻辑
-    │   ├── camera.py          # 摄像头控制模块
-    │   ├── control_button.py  # 界面按钮组件
-    │   ├── login_form.py      # 登录表单组件 
-    │   └── status.py          # 状态显示组件
-    ├── img/                   # 图像资源目录
-    │   └── test.jpg           # 测试用图像
-    ├── models/                # 预训练模型存储
-    │   ├── ONet.pth           # 最终检测网络模型
-    │   ├── PNet.pth           # 建议网络模型 
-    │   └── RNet.pth           # 精筛网络模型
-    ├── train_Net/             # 模型训练模块
-    │   ├── generate_*Net_data.py  # 各网络训练数据生成
-    │   └── train_*Net.py      # 各网络训练脚本
-    ├── utils/                 # 工具函数库
-    │   ├── data.py            # 数据处理工具
-    │   ├── data_format_converter.py  # 数据格式转换
-    │   └── utils.py           # 通用工具函数
-    ├── config.py              # 全局配置文件
-    ├── encryption.py          # 数据加密模块
-    ├── infer_camera.py        # 摄像头实时推理
-    ├── infer_path.py          # 路径图像推理
-    ├── liveness.py            # 活体检测模块
-    ├── logger.py              # 日志记录模块
-    ├── model.py               # 模型定义文件
-    ├── mtcnn.py               # MTCNN实现核心
-    ├── README.md              # 项目说明文档
-    ├── Test.py                # 单元测试脚本
-    └── shape_predictor_68_face_landmarks.dat  # 人脸关键点检测模型
+```
+└── FaceLogin/
+    ├── db/
+    │   ├── csv_syncer.py
+    │   ├── db_init.py
+    │   ├── info.csv
+    │   └── test.sql
+    ├── gui/
+    │   ├── camera.py
+    │   ├── control_button.py
+    │   ├── GUI.py
+    │   ├── login_form.py
+    │   └── status.py
+    ├── img/
+    │   └── test.jpg
+    ├── logs/
+    │   ├── 20250424_165201.log
+    │   ├── 20250424_165340.log
+    │   ├── 20250424_165920.log
+    │   └── log.txt
+    ├── weights/
+    │   ├── onet.pt
+    │   ├── pnet.pt
+    │   └── rnet.pt
+    ├── config.py
+    ├── encryption.py
+    ├── liveness.py
+    ├── logger.py
+    ├── mtcnn.py
+    ├── project_tree.py
+    ├── README.md
+    ├── shape_predictor_68_face_landmarks.dat
+    └── Test.py
 
 ```
 

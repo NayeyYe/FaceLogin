@@ -1,0 +1,14 @@
+pymysql~=1.1.1
+numpy~=1.26.3
+pyqt5~=5.15.11
+opencv-python~=4.11.0.86
+pillow~=10.2.0
+torch~=2.7.0+cu126
+matplotlib~=3.9.4
+tqdm~=4.67.1
+torchvision~=0.22.0+cu126
+cryptography~=41.0.2
+torchsummary~=1.5.1
+dlib~=19.23.0
+scipy~=1.13.1
+bcrypt~=4.1.1
