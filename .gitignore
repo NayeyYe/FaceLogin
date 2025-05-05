@@ -14,8 +14,6 @@ trainImageList.txt
 logs/
 shape_predictor_68_face_landmarks.dat
 # code
-db/
 project_tree.py
-encryption.py
 # reports
 assets/
