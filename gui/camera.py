@@ -1,4 +1,6 @@
 import time
+import sys
+sys.path.append("../")
 import cv2
 from PIL import Image
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
