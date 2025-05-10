@@ -11,7 +11,6 @@ lfw_5590/
 net_7876/
 testImageList.txt
 trainImageList.txt
-logs/
 shape_predictor_68_face_landmarks.dat
 # code
 project_tree.py

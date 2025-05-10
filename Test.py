@@ -5,7 +5,6 @@ from detect.liveness import BlinkDetector
 from detect.mtcnn import FaceRecognitionSystem
 from utils.encryption import BcryptHasher, AESEncryptor
 from db.database_manager import DBOperator
-from utils.logger import logger
 def facerecognition():
     system = FaceRecognitionSystem()
 
@@ -119,4 +118,4 @@ def login_example():
         print(f"登录失败: {str(e)}")
 
 if __name__ == '__main__':
-    login_example()
+    aesencryptor()

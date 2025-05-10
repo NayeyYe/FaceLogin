@@ -8,7 +8,6 @@ from config import detcfg
 from utils.data_format_converter import convert_data
 from utils.utils import IOU, combine_data_list, crop_landmark_image, delete_old_img
 from utils.utils import get_landmark_from_lfw_neg
-from utils.logger import logger
 
 
 # 截取pos,neg,part三种类型图片并resize成12x12大小作为PNet的输入
