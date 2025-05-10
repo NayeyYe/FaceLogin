@@ -7,9 +7,11 @@ from config import dbcfg
 TABLES = {
     dbcfg.users_table: """
     CREATE TABLE IF NOT EXISTS users (
-        name VARCHAR(50) NOT NULL PRIMARY KEY COMMENT '姓名',
+        id VARCHAR(20) PRIMARY KEY COMMENT '账号',
+        name VARCHAR(50) NOT NULL COMMENT '姓名',
         password_hash VARCHAR(60) NOT NULL COMMENT 'bcrypt密码哈希',
-        face_feature BLOB NOT NULL COMMENT '512维人脸特征向量'
+        face_feature BLOB NOT NULL COMMENT '512维人脸特征向量',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     """
 }

@@ -82,6 +82,7 @@ def register_example():
     try:
         with DBOperator() as db:
             success = db.register_user(
+                user_id="20210001",
                 name="张三",
                 password="zhangsan123",
                 feature=sample_feature
@@ -97,7 +98,7 @@ def login_example():
         with DBOperator() as db:
             # 验证用户信息
             user = db.verify_user(
-                name="张三",
+                user_id="20210001",
                 password="zhangsan123"
             )
 

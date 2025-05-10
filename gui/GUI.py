@@ -93,19 +93,6 @@ class MainWindow(QMainWindow):
 
     def _on_login(self, input_name, sid, pwd):
         try:
-            if not all([input_name.strip(), sid.strip(), pwd]):
-                self.status.show_message("登录失败：请填写完整信息", is_error=True)
-                return
-
-            if sid not in self.registered_users:
-                self.status.show_message(f"学号 {sid} 未注册", is_error=True)
-                return
-
-            registered_data = self.registered_users[sid]
-            if (input_name != registered_data["name"]) or (pwd != registered_data["password"]):
-                self.status.show_message("姓名或密码错误", is_error=True)
-                return
-
             if not self._check_camera_conditions():
                 return
 
@@ -115,11 +102,26 @@ class MainWindow(QMainWindow):
                 self._show_validation_errors()
                 return
 
-            similarity = self._calculate_similarity(registered_data)
-            if similarity < 0.95:
-                self.status.show_message(f"登录失败：相似度不足({similarity:.2f}<0.95)", is_error=True)
-                return
+            # 登录验证
 
+            # 数据库验证
+            with DBOperator() as db:
+                # 验证用户凭证
+                user_data = db.verify_user(sid, pwd)
+
+                # 姓名一致性校验
+                if user_data['name'] != input_name.strip():
+                    raise ValueError("姓名与账户不匹配")
+
+                # 获取当前检测特征
+                current_embedding = self.camera.current_face_feature[0]
+                registered_embedding = user_data['face_feature']
+                similarity = self._calculate_similarity(current_embedding, registered_embedding)
+                if similarity < 0.95:
+                    self.status.show_message(f"登录失败：相似度不足({similarity:.2f}<0.95)", is_error=True)
+                    return
+                # 姓名
+                registered_data = self.registered_users[sid]
             self._handle_successful_login(registered_data, sid, similarity)
 
         except Exception as e:
@@ -144,14 +146,24 @@ class MainWindow(QMainWindow):
             self._show_validation_errors()
             return
 
+        # 开始注册
         try:
-            embedding = self.camera.current_face_feature[0].tolist()
+            embedding = self.camera.current_face_feature[0]
             self.registered_users[sid] = {
                 "name": name,
                 "password": pwd,
-                "embedding": embedding,
+                "embedding": embedding.tolist(),
                 "register_time": time.strftime("%Y-%m-%d %H:%M:%S")
             }
+
+            # 数据库操作
+            with DBOperator() as db:
+                db.register_user(
+                    user_id=sid,
+                    name=name,
+                    password=pwd,
+                    feature=embedding
+                )
 
             self.status.show_message(f"{name}({sid}) 注册成功！")
             self.login_form.name_input.setText(name)
@@ -201,9 +213,7 @@ class MainWindow(QMainWindow):
             conditions.append("未正对摄像头！")
         self.status.show_message(error_msg + " | ".join(conditions), is_error=True)
 
-    def _calculate_similarity(self, registered_data):
-        current_embedding = self.camera.current_face_feature[0]
-        registered_embedding = np.array(registered_data["embedding"])
+    def _calculate_similarity(self, current_embedding, registered_embedding):
         return self.camera.face_system.calculate_similarity(
             current_embedding.reshape(1, -1),
             registered_embedding.reshape(1, -1)
