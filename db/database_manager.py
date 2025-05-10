@@ -41,6 +41,18 @@ class DBOperator:
         if self.conn and self.conn.open:
             self.conn.close()
 
+    def user_exists(self, user_id: str) -> bool:
+        """检查指定用户是否存在"""
+        try:
+            with self.conn.cursor() as cursor:
+                cursor.execute("SELECT EXISTS(SELECT 1 FROM users WHERE id = %s) AS exist", (user_id,))
+                result = cursor.fetchone()
+                return bool(result['exist'])
+        except pymysql.Error as e:
+            raise RuntimeError(f"存在性检查失败: {str(e)}")
+        except KeyError:
+            raise RuntimeError("数据库返回结果格式异常")
+
     def register_user(self, user_id: str, name: str, password: str, feature: np.ndarray) -> bool:
         """用户注册"""
         try:
