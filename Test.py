@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 from config import detcfg, dbcfg
-from liveness import BlinkDetector
-from mtcnn import FaceRecognitionSystem
-from encryption import BcryptHasher, AESEncryptor
+from detect.liveness import BlinkDetector
+from detect.mtcnn import FaceRecognitionSystem
+from utils.encryption import BcryptHasher, AESEncryptor
 
 
 def facerecognition():
@@ -72,4 +72,4 @@ def aesencryptor():
     print(f"数据一致性: {np.allclose(test_feature, decrypted)}")
 
 if __name__ == '__main__':
-    facerecognition()
+    aesencryptor()

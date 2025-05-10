@@ -1,23 +1,18 @@
+import sys
+sys.path.append('../')
 import cv2
 import torch
 import numpy as np
 from PIL import Image
-from facenet_pytorch import MTCNN, InceptionResnetV1
+from facenet_pytorch import InceptionResnetV1
 from torchvision import transforms
 from config import detcfg
-from infer_camera import infer_image
+from detect.infer_camera import infer_image
 
 
 class FaceRecognitionSystem:
     def __init__(self):
         # 初始化MTCNN检测器
-        self.mtcnn = MTCNN(
-            keep_all=True,
-            thresholds=[0.6, 0.7, 0.7],
-            post_process=False,
-            device=detcfg.device,
-            select_largest=False
-        )
 
         # 初始化FaceNet模型
         self.resnet = InceptionResnetV1(pretrained='vggface2').eval().to(detcfg.device)

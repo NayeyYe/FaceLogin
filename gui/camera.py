@@ -4,10 +4,10 @@ sys.path.append("../")
 import cv2
 from PIL import Image
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
-from PyQt5.QtGui import QImage, QPixmap, QColor, QPainter, QFont
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout
-from liveness import BlinkDetector
-from mtcnn import FaceRecognitionSystem
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QLabel, QVBoxLayout
+from detect.liveness import BlinkDetector
+from detect.mtcnn import FaceRecognitionSystem
 
 
 class CameraWidget(QLabel):

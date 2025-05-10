@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append('../')
 from config import cfg
 import cv2
 import dlib

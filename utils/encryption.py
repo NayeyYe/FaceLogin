@@ -2,7 +2,7 @@ import bcrypt
 import numpy as np
 from cryptography.fernet import Fernet, InvalidToken
 from config import logscfg, dbcfg
-from logger import setup_logger
+from utils.logger import setup_logger
 logger = setup_logger(logscfg)
 class BcryptHasher:
     """密码哈希与验证模块"""

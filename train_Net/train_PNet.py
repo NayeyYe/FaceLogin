@@ -9,7 +9,7 @@ from torch.optim.lr_scheduler import MultiStepLR
 from torchsummary import summary
 from torch.utils.data import DataLoader
 from config import detcfg
-from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, PNet
+from train_Net.model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, PNet
 from utils.data import CustomDataset
 
 # 设置损失值的比例

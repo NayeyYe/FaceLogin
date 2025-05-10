@@ -9,7 +9,7 @@ from torchsummary import summary
 from torch.utils.data import DataLoader
 from config import detcfg
 from utils.utils import plot_metrics
-from model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
+from train_Net.model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
 from utils.data import CustomDataset
 
 # 设置损失值的比例

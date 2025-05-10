@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import cv2
 import numpy as np
 import torch
@@ -5,7 +7,7 @@ from config import detcfg
 from utils.utils import generate_bbox, py_nms, convert_to_square
 from utils.utils import pad, calibrate_box, processed_image
 
-device = torch.device("cuda")
+device = detcfg.device
 
 # 获取P模型
 pnet = torch.jit.load(detcfg.pnet_weight)

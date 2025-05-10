@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append("../")
 import pymysql
 from config import dbcfg
 # 表结构定义SQL语句
@@ -6,7 +9,6 @@ TABLES = {
     CREATE TABLE IF NOT EXISTS users (
         student_id VARCHAR(20) PRIMARY KEY COMMENT '账号',
         name VARCHAR(50) NOT NULL COMMENT '姓名',
-        gender ENUM('M', 'F', 'O') COMMENT '性别枚举',
         password_hash VARCHAR(60) NOT NULL COMMENT 'bcrypt密码哈希',
         face_feature BLOB NOT NULL COMMENT '512维人脸特征向量',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
