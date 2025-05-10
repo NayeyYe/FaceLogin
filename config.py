@@ -23,10 +23,12 @@ class DBConfig(BaseConfig):
         super().__init__()
         self.host = 'localhost'
         self.port = 3306
-        self.user = 'root'
+        self.super_admin = 'root'
         self.password = '13Password,'
         self.database = 'facelogin'
-        self.AES_KEY = Fernet.generate_key()
+        self.AES_KEY = b'om-A9wg5K0-sZxmjBbHIL8o_iUZvIZd3g5Te9z2PpnA='
+        self.users_table = 'users'
+        self.admin_table = 'admins'
 
 class DetectionConfig(BaseConfig):
     def __init__(self):
@@ -54,4 +56,4 @@ detcfg = DetectionConfig()
 logscfg = LogsConfig()
 
 if __name__ == '__main__':
-    print(cfg.device)
+    print(Fernet.generate_key())

@@ -4,8 +4,7 @@ from config import detcfg, dbcfg
 from detect.liveness import BlinkDetector
 from detect.mtcnn import FaceRecognitionSystem
 from utils.encryption import BcryptHasher, AESEncryptor
-
-
+from db.database_manager import DBOperator
 def facerecognition():
     system = FaceRecognitionSystem()
 
@@ -71,5 +70,52 @@ def aesencryptor():
     print(f"解密后: {decrypted[:5]}")
     print(f"数据一致性: {np.allclose(test_feature, decrypted)}")
 
+
+
+
+# 模拟人脸特征 (512维向量)
+sample_feature = np.random.rand(512)
+
+
+def register_example():
+    """注册示例"""
+    try:
+        with DBOperator() as db:
+            success = db.register_user(
+                user_id="20210001",
+                name="张三",
+                password="zhangsan123",
+                feature=sample_feature
+            )
+            print("注册成功" if success else "注册失败")
+    except Exception as e:
+        print(f"注册出错: {str(e)}")
+
+
+def login_example():
+    """登录示例"""
+    try:
+        with DBOperator() as db:
+            # 验证用户信息
+            user = db.verify_user(
+                user_id="20210001",
+                password="zhangsan123"
+            )
+
+            # 模拟当前检测到的人脸特征
+            current_feature = np.random.rand(512)
+
+            # 计算相似度
+            stored_feature = user['face_feature']
+            similarity = np.dot(current_feature, stored_feature) / (
+                    np.linalg.norm(current_feature) * np.linalg.norm(stored_feature)
+            )
+
+            print(f"登录成功！用户信息：{user['name']}")
+            print(f"特征相似度：{similarity:.2%}")
+
+    except Exception as e:
+        print(f"登录失败: {str(e)}")
+
 if __name__ == '__main__':
-    aesencryptor()
+    login_example()

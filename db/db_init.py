@@ -5,9 +5,9 @@ import pymysql
 from config import dbcfg
 # 表结构定义SQL语句
 TABLES = {
-    'users': """
+    dbcfg.users_table: """
     CREATE TABLE IF NOT EXISTS users (
-        student_id VARCHAR(20) PRIMARY KEY COMMENT '账号',
+        id VARCHAR(20) PRIMARY KEY COMMENT '账号',
         name VARCHAR(50) NOT NULL COMMENT '姓名',
         password_hash VARCHAR(60) NOT NULL COMMENT 'bcrypt密码哈希',
         face_feature BLOB NOT NULL COMMENT '512维人脸特征向量',
@@ -22,15 +22,15 @@ def check_database():
         conn = pymysql.connect(
             host=dbcfg.host,
             port=dbcfg.port,
-            user=dbcfg.user,
+            user=dbcfg.super_admin,
             password=dbcfg.password,
             charset='utf8mb4'
         )
 
         with conn.cursor() as cursor:
-            # cursor.execute(
-            #     f"DROP DATABASE IF NOT EXISTS {dbcfg.database} "
-            # )
+            cursor.execute(
+                f"DROP DATABASE IF EXISTS {dbcfg.database} "
+            )
             # 创建数据库
             cursor.execute(
                 f"CREATE DATABASE IF NOT EXISTS {dbcfg.database} "
