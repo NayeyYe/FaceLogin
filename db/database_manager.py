@@ -41,34 +41,32 @@ class DBOperator:
         if self.conn and self.conn.open:
             self.conn.close()
 
-    def register_user(self, user_id: str, name: str, password: str, feature: np.ndarray) -> bool:
+    def register_user(self, name: str, password: str, feature: np.ndarray) -> bool:
         """用户注册"""
         try:
             with self.conn.cursor() as cursor:
                 # 检查用户是否存在
-                if self.get_user(user_id):
+                if self.get_user(name):
                     raise ValueError("用户已存在")
 
                 # 密码哈希和特征加密
                 hashed_pwd = BcryptHasher.generate(password)
                 encrypted_feature = self.aes.encrypt_feature(feature)
 
-                sql = """INSERT INTO users 
-                        (id, name, password_hash, face_feature)
-                        VALUES (%s, %s, %s, %s)"""
-                cursor.execute(sql, (user_id, name, hashed_pwd, encrypted_feature))
+                sql = """INSERT INTO users(name, password_hash, face_feature) VALUES (%s, %s, %s)"""
+                cursor.execute(sql, (name, hashed_pwd, encrypted_feature))
                 self.conn.commit()
                 return True
         except pymysql.Error as e:
             self.conn.rollback()
             raise RuntimeError(f"注册失败: {str(e)}")
 
-    def verify_user(self, user_id: str, password: str) -> dict:
+    def verify_user(self, name: str, password: str) -> dict:
         """用户验证"""
         try:
             with self.conn.cursor() as cursor:
-                sql = "SELECT * FROM users WHERE id = %s"
-                cursor.execute(sql, (user_id,))
+                sql = "SELECT * FROM users WHERE name = %s"
+                cursor.execute(sql, (name,))
                 user = cursor.fetchone()
 
                 if not user:
@@ -83,12 +81,12 @@ class DBOperator:
         except pymysql.Error as e:
             raise RuntimeError(f"查询失败: {str(e)}")
 
-    def get_user(self, user_id: str) -> dict:
+    def get_user(self, name: str) -> dict:
         """获取用户信息"""
         try:
             with self.conn.cursor() as cursor:
-                sql = "SELECT * FROM users WHERE id = %s"
-                cursor.execute(sql, (user_id,))
+                sql = "SELECT * FROM users WHERE name = %s"
+                cursor.execute(sql, (name,))
                 return cursor.fetchone()
         except pymysql.Error as e:
             raise RuntimeError(f"查询失败: {str(e)}")

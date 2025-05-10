@@ -10,7 +10,7 @@ from camera import CameraWidget
 from login_form import LoginForm, UserInfoWidget
 from control_button import ControlButtons
 from status import StatusBar
-from utils import encryption
+from db.database_manager import DBOperator
 
 
 class MainWindow(QMainWindow):
