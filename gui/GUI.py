@@ -1,8 +1,6 @@
 import sys
 sys.path.append("../")
-import time
 import traceback
-import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QMainWindow, QSplitter, QApplication,
                              QWidget, QVBoxLayout)
@@ -18,7 +16,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.is_logged_in = False
         self.user_info = {}
-        self.registered_users = {}
         self.current_user = None
         self.current_method = "OpenCV"
 
@@ -102,8 +99,6 @@ class MainWindow(QMainWindow):
                 self._show_validation_errors()
                 return
 
-            # 登录验证
-
             # 数据库验证
             with DBOperator() as db:
                 # 验证用户凭证
@@ -120,8 +115,8 @@ class MainWindow(QMainWindow):
                 if similarity < 0.95:
                     self.status.show_message(f"登录失败：相似度不足({similarity:.2f}<0.95)", is_error=True)
                     return
-                # 姓名
-                registered_data = self.registered_users[sid]
+            registered_embedding = registered_embedding.tolist()
+            registered_data = {"name": user_data['name'], "embedding": registered_embedding}
             self._handle_successful_login(registered_data, sid, similarity)
 
         except Exception as e:
@@ -129,32 +124,29 @@ class MainWindow(QMainWindow):
             print(f"登录出错：{traceback.format_exc()}")
 
     def _on_register(self, name, sid, pwd):
-        if not all([name.strip(), sid.strip(), pwd]):
-            self.status.show_message("注册失败：请填写完整信息", is_error=True)
-            return
-
-        if sid in self.registered_users:
-            self.status.show_message(f"学号 {sid} 已被注册", is_error=True)
-            return
-
+        # 检查摄像头
         if not self._check_camera_conditions():
             return
-
+        # 检查置信度
         if not (self.camera.current_prob > 0.99 and
                 self.camera.liveness_status and
                 self.camera.current_face_feature is not None):
             self._show_validation_errors()
             return
+        # 检查注册信息
+        if not all([name.strip(), sid.strip(), pwd]):
+            self.status.show_message("注册失败：请填写完整信息", is_error=True)
+            return
 
         # 开始注册
         try:
+            # 检查用户是否已存在
+            with DBOperator() as db:
+                if db.user_exists(sid):
+                    self.status.show_message(f"学号 {sid} 已被注册", is_error=True)
+                    return
+
             embedding = self.camera.current_face_feature[0]
-            self.registered_users[sid] = {
-                "name": name,
-                "password": pwd,
-                "embedding": embedding.tolist(),
-                "register_time": time.strftime("%Y-%m-%d %H:%M:%S")
-            }
 
             # 数据库操作
             with DBOperator() as db:

@@ -10,13 +10,8 @@ class BaseConfig:
 
         # 文件目录
         self.root_dir = os.path.dirname(__file__)
-        # 数据保存目录
-        self.database_dir = os.path.join(self.root_dir, 'db')
-        self.csv_dir = os.path.join(self.database_dir, 'info.csv')
         # gui目录
         self.gui_dir = os.path.join(self.root_dir, 'gui')
-        # logs目录
-        self.logs_dir = os.path.join(self.root_dir, 'logs')
 
 class DBConfig(BaseConfig):
     def __init__(self):
@@ -48,7 +43,7 @@ class DetectionConfig(BaseConfig):
 class LogsConfig(BaseConfig):
     def __init__(self):
         super().__init__()
-        self.logs_dir = os.path.join(self.root_dir, 'logs')
+        self.logs = os.path.join(self.root_dir, '.log')
 
 cfg = BaseConfig()
 dbcfg = DBConfig()
