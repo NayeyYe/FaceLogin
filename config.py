@@ -25,6 +25,10 @@ class DBConfig(BaseConfig):
         self.users_table = 'users'
         self.admin_table = 'admins'
 
+        # csv文件
+        self.database_dir = os.path.join(self.root_dir, 'db')
+        self.csv = os.path.join(self.database_dir, 'info.csv')
+
 class DetectionConfig(BaseConfig):
     def __init__(self):
         super().__init__()
