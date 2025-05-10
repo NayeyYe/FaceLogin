@@ -17,6 +17,8 @@
 
 ##  环境安装
 
+原本是有requirements.txt用于版本控制，但是版本过高了有些设备无法下载，所以下列的库版本只用于参考
+
 **python == 3.9**
 
 | 库            | 版本         |
@@ -32,14 +34,9 @@
 | matplotlib    | 3.9.4        |
 | tqdm          | 4.67.1       |
 | pyqt5         | 5.15.11      |
-
-如果不需要密码加密和mysql的话，下面的库可以选择性安装
-
-| 库           | 版本   |
-| ------------ | ------ |
-| pymysql      | 1.1.1  |
-| cryptography | 41.0.2 |
-| bcrypt       | 4.1.1  |
+| pymysql       | 1.1.1        |
+| cryptography  | 41.0.2       |
+| bcrypt        | 4.1.1        |
 
 * 关于dlib的安装
 
@@ -68,44 +65,69 @@ pip install dlib-19.23.0-cp39-cp39-win_amd64.whl
 
 ## 项目结构
 
-```
-FaceLogin/  # 主项目目录
-    │
-    ├── db/                    # 数据库相关文件
-    │   ├── csv_syncer.py      # CSV与数据库同步脚本
-    │   ├── db_init.py         # 数据库初始化脚本
-    │   ├── info.csv           # 用户信息数据文件
-    │   └── test.sql           # SQL测试脚本
-    ├── gui/                   # 图形界面模块
-    │   ├── GUI.py             # 主界面逻辑
-    │   ├── camera.py          # 摄像头控制模块
-    │   ├── control_button.py  # 界面按钮组件
-    │   ├── login_form.py      # 登录表单组件 
-    │   └── status.py          # 状态显示组件
-    ├── img/                   # 图像资源目录
-    │   └── test.jpg           # 测试用图像
-    ├── models/                # 预训练模型存储
-    │   ├── ONet.pth           # 最终检测网络模型
-    │   ├── PNet.pth           # 建议网络模型 
-    │   └── RNet.pth           # 精筛网络模型
-    ├── train_Net/             # 模型训练模块
-    │   ├── generate_*Net_data.py  # 各网络训练数据生成
-    │   └── train_*Net.py      # 各网络训练脚本
-    ├── utils/                 # 工具函数库
-    │   ├── data.py            # 数据处理工具
-    │   ├── data_format_converter.py  # 数据格式转换
-    │   └── utils.py           # 通用工具函数
-    ├── config.py              # 全局配置文件
-    ├── encryption.py          # 数据加密模块
-    ├── infer_camera.py        # 摄像头实时推理
-    ├── infer_path.py          # 路径图像推理
-    ├── liveness.py            # 活体检测模块
-    ├── logger.py              # 日志记录模块
-    ├── model.py               # 模型定义文件
-    ├── mtcnn.py               # MTCNN实现核心
-    ├── README.md              # 项目说明文档
-    ├── Test.py                # 单元测试脚本
-    └── shape_predictor_68_face_landmarks.dat  # 人脸关键点检测模型
+```text
+├── FaceLogin/ (主项目目录)
+│   ├── dataset/
+│   │   ├── 12/                  # generate_PNet_data.py生成
+│   │   ├── 24/                  # generate_RNet_data.py生成
+│   │   ├── 48/                  # generate_ONet_data.py生成
+│   │   ├── lfw_5590/            # 自行下载
+│   │   ├── net_7876/            # 自行下载
+│   │   ├── WIDER_train/         # 自行下载
+│   │   ├── testImageList.txt    # 下载lfw_5590/和net_7876/自带
+│   │   ├── trainImageList.txt   # 下载lfw_5590/和net_7876/自带
+│   │   └── wider_face_train.txt # 源代码中有，是wider_split的增强版
+│   │   
+│   ├── db/ (数据库相关文件)
+│   │   ├──csv_syncer.py (0.0B)         # CSV与数据库同步工具
+│   │   ├── db_init.py (1.6KB)       # 数据库初始化脚本
+│   │   ├── database_manager.py (3.7KB)  # 数据库连接和CRUD操作
+│   │   ├── info.csv (0.0B)          # 用户信息存储CSV
+│   │   └── test.sql (0.0B)          # SQL测试脚本
+│   │
+│   ├── detect/ (人脸检测相关)
+│   │   ├── infer_camera.py (8.7KB)  # 摄像头实时推理
+│   │   ├── infer_path.py (8.7KB)    # 图片路径批量推理
+│   │   ├── liveness.py (4.6KB)      # 活体检测模块
+│   │   └── mtcnn.py (5.8KB)         # MTCNN人脸检测实现
+│   │   └── (1目录)
+│   │
+│   ├── gui/ (图形界面相关)
+│   │   ├── GUI.py (9.3KB)           # 主界面窗口
+│   │   ├── camera.py (7.3KB)        # 摄像头画面处理
+│   │   ├── control_button.py (3.2KB) # 控制按钮组件
+│   │   ├── login_form.py (4.2KB)    # 登录表单组件
+│   │   └── status.py (5.0KB)        # 状态显示组件
+│   │   └── (1目录)
+│   │
+│   ├── img/ (图片资源)
+│   │   └── test.jpg (141.6KB)       # 测试用图片
+│   │
+│   ├── models/ (预训练模型)
+│   │   ├── ONet.pth (1.5MB)         # MTCNN第三阶段模型
+│   │   ├── PNet.pth (44.5KB)        # MTCNN第一阶段模型
+│   │   └── RNet.pth (414.2KB)       # MTCNN第二阶段模型
+│   │
+│   ├── train_Net/ (模型训练相关)
+│   │   ├── generate_ONet_data.py (8.1KB)  # ONet训练数据生成
+│   │   ├── generate_PNet_data.py (8.6KB)  # PNet训练数据生成
+│   │   ├── generate_RNet_data.py (5.4KB)  # RNet训练数据生成
+│   │   ├── model.py (8.0KB)         # 模型架构定义
+│   │   ├── train_ONet.py (3.2KB)    # ONet训练脚本
+│   │   ├── train_PNet.py (3.2KB)    # PNet训练脚本
+│   │   └── train_RNet.py (3.2KB)    # RNet训练脚本
+│   │
+│   └── utils/ (工具函数)
+│       ├── data.py (2.8KB)          # 数据加载/预处理工具
+│       ├── data_format_converter.py (2.6KB)  # 数据格式转换
+│       ├── encryption.py (2.5KB)    # 加密解密工具
+│       └── utils.py (28.4KB)        # 通用工具函数
+│   
+│
+├── config.py (1.8KB)                # 全局配置文件
+├── Test.py (3.7KB)                  # 单元测试脚本
+├── README.md (5.9KB)                # 项目说明文档
+└── shape_predictor_68_face_landmarks.dat (95.1MB)  # 人脸关键点检测模型
 
 ```
 
@@ -125,18 +147,18 @@ FaceLogin/  # 主项目目录
    # lfw_5590和net_7876文件夹都是存放人脸图片的
    # testImageList.txt和trainImageList.txt都是标注信息文本文件，标注信息为图片文件、人脸box的坐标位置、人脸5个关键点的坐标位置
    ```
-   
+
    最后得到的dataset中应该有
-   
+
    * WIDER_train
    * lfw_5590
    * net_7876
    * testImageList.txt
    * trainImageList.txt
    * wider_face_train.txt（这个是本人提供的，在源代码中）
-   
+
 2. **训练模型** (可选)
-   
+
    ```bash
    # 依次启动下面的代码
    python generate_Pnet_data.py
@@ -146,13 +168,24 @@ FaceLogin/  # 主项目目录
    python generate_Onet_data.py
    python train_Onet.py
    ```
-   
+
    运行完成后在dataset文件夹中有**12，24，48**三个文件夹，里面是图片的标签文件（切分之后的文件在处理完标签之后已经被删除，也可以不删除，只要把generate代码中的最后一行注释掉就可以了）
-   
+
 3. **运行主程序**
+
+   * 初始化mysql
+
+   ```bash
+   python db_init.py
+   ```
+
+   * 运行GUI.py即可
+
    ```bash
    python GUI.py
    ```
+
+   
 
 ## 界面操作指南
 
