@@ -11,6 +11,7 @@ from utils.data_format_converter import convert_data
 from utils.utils import py_nms, combine_data_list, crop_landmark_image, delete_old_img
 from utils.utils import save_hard_example, generate_bbox, read_annotation, processed_image
 from utils.utils import get_landmark_from_lfw_neg
+from utils.logger import logger
 # 获取P模型
 device = torch.device("cuda")
 pnet = torch.jit.load(detcfg.pnet_weight)

@@ -5,6 +5,7 @@ from detect.liveness import BlinkDetector
 from detect.mtcnn import FaceRecognitionSystem
 from utils.encryption import BcryptHasher, AESEncryptor
 from db.database_manager import DBOperator
+from utils.logger import logger
 def facerecognition():
     system = FaceRecognitionSystem()
 

@@ -9,6 +9,7 @@ from login_form import LoginForm, UserInfoWidget
 from control_button import ControlButtons
 from status import StatusBar
 from db.database_manager import DBOperator
+from utils.logger import logger
 
 
 class MainWindow(QMainWindow):

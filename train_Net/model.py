@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import numpy as np
+from utils.logger import logger
 
 class PNet(nn.Module):
     def __init__(self):

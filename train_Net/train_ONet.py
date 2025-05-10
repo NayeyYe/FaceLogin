@@ -11,6 +11,7 @@ from config import detcfg
 from utils.utils import plot_metrics
 from train_Net.model import ClassLoss, BBoxLoss, LandmarkLoss, accuracy, ONet
 from utils.data import CustomDataset
+from utils.logger import logger
 
 # 设置损失值的比例
 radio_cls_loss = 1.0
